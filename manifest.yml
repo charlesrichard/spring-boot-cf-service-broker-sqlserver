@@ -1,10 +1,10 @@
 ---
 applications:
-- name: cf-uni-java-broker
+- name: spring-boot-cf-uni-java-broker
   memory: 512M
   host: unibroker
   instances: 1
-  package: target/cf-uni-java-broker-0.0.1-SNAPSHOT.jar
+  package: target/spring-boot-cf-uni-java-broker-0.0.1-SNAPSHOT.jar
   env:
     CF_SB_SERVICE_HOST: localhost
     CF_SB_SERVICE_PASSWORD: Password1234
