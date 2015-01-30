@@ -4,7 +4,8 @@ applications:
   memory: 512M
   host: unibroker
   instances: 1
-  package: target/spring-boot-cf-uni-java-broker-0.0.1-SNAPSHOT.jar
+  package: target/spring-boot-cf-uni-java-broker-0.0.1-SNAPSHOT.war
+  buildpack: https://github.com/albertoaflores/java-buildpack
   env:
     CF_SB_SERVICE_HOST: localhost
     CF_SB_SERVICE_PASSWORD: Password1234
