@@ -98,8 +98,7 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    		.content(body)
 	    	)
 	    	.andDo(print())
-	    	.andExpect(status().isUnprocessableEntity())
-	    	.andExpect(jsonPath("$.message", containsString(binding.getServiceInstanceId())));
+	    	.andExpect(status().isUnprocessableEntity());
  	}
 	
 	@Test
@@ -121,8 +120,7 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    		.contentType(MediaType.APPLICATION_JSON)
 	    		.content(body)
 	    	)
-	    	.andExpect(status().isConflict())
-	    	.andExpect(jsonPath("$.message", containsString(binding.getId())));
+	    	.andExpect(status().isConflict());
 	    
 	    serviceInstanceBindingService.deleteServiceInstanceBinding(instance.getId(), binding.getId());
 	    serviceInstanceService.deleteServiceInstance(instance.getId());
