@@ -2,9 +2,9 @@
 applications:
 - name: spring-boot-cf-uni-java-broker
   memory: 512M
-  host: unibroker
+  host: unibroker-svob
   instances: 1
-  package: target/spring-boot-cf-uni-java-broker-0.0.1-SNAPSHOT.war
+  path: target/spring-boot-cf-uni-java-broker-0.0.1-SNAPSHOT.war
   env:
     CF_SB_SERVICE_HOST: localhost
     CF_SB_SERVICE_PASSWORD: Password1234
