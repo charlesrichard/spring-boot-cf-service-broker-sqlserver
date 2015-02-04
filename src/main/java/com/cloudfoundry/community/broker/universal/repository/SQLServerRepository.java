@@ -41,7 +41,7 @@ public class SQLServerRepository extends BaseJDBCRepository{
 	
 	// Binding user creation scripts ------------------------------------------------------------------
 	// Define $MASTER_DB$, $INSTANCE_DB$, $INSTANCE_USERNAME$, and $INSTANCE_PASSWORD$
-	private static final String CREATE_USER_template = "USE [<MASTER_DB>] CREATE LOGIN [<INSTANCE_USERNAME>] WITH PASSWORD=N'<INSTANCE_PASSWORD>', DEFAULT_DATABASE=[<INSTANCE_DB>], CHECK_EXPIRATION=OFF, CHECK_POLICY=ON USE [<INSTANCE_DB>] CREATE USER [<INSTANCE_USERNAME>] FOR LOGIN [<INSTANCE_USERNAME>] USE [<INSTANCE_DB>] ALTER USER [<INSTANCE_USERNAME>] WITH DEFAULT_SCHEMA=[dbo] USE [<INSTANCE_DB>] ALTER ROLE [db_owner] ADD MEMBER [<INSTANCE_USERNAME>];";
+	private static final String CREATE_USER_template = "USE [<MASTER_DB>] CREATE LOGIN [<INSTANCE_USERNAME>] WITH PASSWORD=N'<INSTANCE_PASSWORD>', DEFAULT_DATABASE=[<INSTANCE_DB>], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF USE [<INSTANCE_DB>] CREATE USER [<INSTANCE_USERNAME>] FOR LOGIN [<INSTANCE_USERNAME>] USE [<INSTANCE_DB>] ALTER USER [<INSTANCE_USERNAME>] WITH DEFAULT_SCHEMA=[dbo] USE [<INSTANCE_DB>] ALTER ROLE [db_owner] ADD MEMBER [<INSTANCE_USERNAME>];";
 	// ------------------------------------------------------------------
 	
 	// Smoke Test scripts ------------------------------------------------------------------
