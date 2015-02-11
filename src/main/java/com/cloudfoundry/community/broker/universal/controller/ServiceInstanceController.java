@@ -5,8 +5,10 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.cloudfoundry.community.broker.universal.controller.BaseController;
 import com.cloudfoundry.community.broker.universal.controller.ServiceInstanceController;
@@ -27,7 +28,7 @@ import com.cloudfoundry.community.broker.universal.model.ErrorMessage;
 import com.cloudfoundry.community.broker.universal.model.ServiceInstance;
 import com.cloudfoundry.community.broker.universal.service.ServiceInstanceServiceFactory;
 
-@RestController
+@Controller
 public class ServiceInstanceController extends BaseController {
 
 	public static final String BASE_PATH = "/v2/service_instances";
@@ -48,6 +49,12 @@ public class ServiceInstanceController extends BaseController {
 		return service.getAllServiceInstances();
 	}
 	*/
+	
+	@RequestMapping(value = BASE_PATH, method = RequestMethod.GET)
+	public String helloWord()
+	{
+		return "hello world";
+	}
 		
 	@RequestMapping(value = BASE_PATH + "/{instanceId}", method = RequestMethod.PUT)
 	public ResponseEntity<CreateServiceInstanceResponse> createServiceInstance(

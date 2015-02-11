@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.pivotal.demo</groupId>
   <artifactId>spring-boot-cf-uni-java-broker</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>war</packaging>
   <name>Spring Boot Universal Service Broker</name>
   	<parent>
@@ -47,6 +47,10 @@
             <id>spring-milestones</id>
             <url>http://repo.spring.io/milestone</url>
         </repository>
+       	<repository>
+    		<id>repo</id>
+    		<url>file://${project.basedir}/repo</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
         <pluginRepository>
@@ -119,16 +123,12 @@
 <dependency>
   <groupId>ojdbc7</groupId>
   <artifactId>ojdbc7</artifactId>
-  <version>1.0.0</version>
-  <scope>system</scope>
-  <systemPath>${basedir}/lib/ojdbc7.jar</systemPath>
+  <version>7</version>
 </dependency>
 <dependency>
   <groupId>sqljdbc41</groupId>
   <artifactId>sqljdbc41</artifactId>
-  <version>1.0.0</version>
-  <scope>system</scope>
-  <systemPath>${basedir}/lib/sqljdbc41.jar</systemPath>
+  <version>4.1</version>
 </dependency>
 	</dependencies>
 
