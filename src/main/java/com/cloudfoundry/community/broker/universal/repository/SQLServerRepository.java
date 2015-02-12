@@ -32,7 +32,7 @@ public class SQLServerRepository extends BaseJDBCRepository{
 	// ------------------------------------------------------------------
 	
 	// Instance registry scripts ------------------------------------------------------------------
-	// Define $ADMIN_DB$, $INSTANCE_ID$, $ORGANIZATION_ID$, $INSTANCE_DB$, and $SPACE_ID$
+	// Define $ADMIN_DB$, $INSTANCE_ID$, $ORGANIZATION_ID$, $INSTANCE_DB$, $SPACE_ID$, $USERNAME$, and $PASSWORD$
 	private static final String REGISTER_INSTANCE_template = "USE [<ADMIN_DB>] INSERT INTO [instance] VALUES ('<INSTANCE_ID>', '<ORGANIZATION_ID>', '<SPACE_ID>', '<SERVICE_DEFINITION_ID>', '<PLAN_ID>', '<INSTANCE_DB>', CURRENT_TIMESTAMP);";
 	// Define $ADMIN_DB$ and $INSTANCE_ID$
 	private static final String GET_INSTANCE_template = "USE [<ADMIN_DB>] SELECT i.instance_id, i.organization_id, i.space_id, i.service_definition_id, i.plan_id, i.instance_db FROM [instance] i with(nolock) WHERE i.instance_id = '<INSTANCE_ID>';";
