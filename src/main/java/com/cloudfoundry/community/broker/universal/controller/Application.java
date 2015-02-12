@@ -3,7 +3,6 @@ package com.cloudfoundry.community.broker.universal.controller;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ImportResource;
 
 @ComponentScan(basePackages = {"com.cloudfoundry.community.broker.universal"})
 @EnableAutoConfiguration

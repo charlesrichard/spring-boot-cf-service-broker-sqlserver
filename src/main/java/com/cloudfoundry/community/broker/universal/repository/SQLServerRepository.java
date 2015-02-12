@@ -7,10 +7,8 @@ import org.stringtemplate.v4.ST;
 
 import com.cloudfoundry.community.broker.universal.constants.EnvironmentVarConstants;
 import com.cloudfoundry.community.broker.universal.util.FormattedVariableList;
-import com.microsoft.sqlserver.jdbc.*;
 
 public class SQLServerRepository extends BaseJDBCRepository{
-	private SQLServerConnection conn;
 	
 	// Env variable keys ------------------------------------------------------------------
 	private static final String SQL_SERVER_ADMIN_DATABASE_NAME_env_key = "CF_SB_SQL_SERVER_ADMIN_DATABASE_NAME";
