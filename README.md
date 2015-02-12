@@ -20,7 +20,16 @@ Example of these variables, for SQL Server, are below.
 The SQL Server or Oracle libs will need to be added to a local maven repo to buid correctly. The pom is updated accordingly, but the following commands should be run the project root.
 
 Oracle:
+```bat
 mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true -Dpackaging=jar -Dfile=lib/ojdbc7.jar -DgroupId=ojdbc7 -DartifactId=ojdbc7 -Dversion=7
+```
 
 SQL Server:
+```bat
 mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true -Dpackaging=jar -Dfile=lib/sqljdbc41.jar -DgroupId=sqljdbc41 -DartifactId=sqljdbc41 -Dversion=4.1
+```
+
+To build the project without running tests, execute the following:
+```bat
+mvn clean package -DskipTests=true
+```
