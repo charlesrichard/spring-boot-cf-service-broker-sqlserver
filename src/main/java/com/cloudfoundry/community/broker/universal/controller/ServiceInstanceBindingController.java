@@ -37,9 +37,8 @@ public class ServiceInstanceBindingController extends BaseController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ServiceInstanceBindingController.class);
 		
-	public ServiceInstanceBindingController() throws Exception
+	public void InitializeController() throws Exception
 	{
-		super();
 		serviceInstanceService = ServiceInstanceServiceFactory.getInstance(serviceType);
 		serviceInstanceBindingService = ServiceInstanceBindingServiceFactory.getInstance(serviceType);
 	}

@@ -25,7 +25,7 @@ import com.cloudfoundry.community.broker.universal.service.*;
  *
  */
 public abstract class BaseController {
-	private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
+	protected static final Logger logger = LoggerFactory.getLogger(BaseController.class);
 	
 	protected ServiceType serviceType;
 	protected ServiceInstanceBindingService serviceInstanceBindingService;
@@ -39,7 +39,20 @@ public abstract class BaseController {
 			throw new IllegalStateException(EnvironmentVarConstants.SERVICE_TYPE_env_key + " environment variable cannot be null or empty");
 		
 		serviceType = Enum.valueOf(ServiceType.class, serviceTypeEnvVal);
+		
+		try
+		{
+			InitializeController();
+		} 
+		catch (Exception ex)
+		{
+			logger.error("Error while instantiating controller: " + ex.getMessage() + " "+ ex.getStackTrace());
+			Thread.currentThread().interrupt();
+			return;
+		}
 	}
+	
+	public abstract void InitializeController() throws Exception;
 	
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	@ResponseBody

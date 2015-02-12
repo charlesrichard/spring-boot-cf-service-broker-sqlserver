@@ -10,4 +10,6 @@ public class IdentifierConstants {
 	public static final String CREDENTIALS_USERNAME = "username";
 	public static final String CREDENTIALS_PASSWORD = "password";
 	public static final String CREDENTIALS_URI = "uri";
+	
+	public static final String DASHBOARD_BASE_PATH = "/v2/dashboard";
 }

@@ -13,8 +13,7 @@ public class CatalogController extends BaseController {
 
 	public static final String BASE_PATH = "/v2/catalog";
 			
-	public CatalogController() throws Exception {
-		super();
+	public void InitializeController() throws Exception {
 		catalogService = CatalogServiceFactory.getInstance(serviceType);
 	}
 
