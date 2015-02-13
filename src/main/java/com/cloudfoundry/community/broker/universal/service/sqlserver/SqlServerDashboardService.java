@@ -42,6 +42,7 @@ public class SqlServerDashboardService implements DashboardService {
 				st.add("ORGANIZATION_ID", instance.getOrganizationId());
 				st.add("SPACE_ID", instance.getSpaceId());
 				st.add("PLAN_ID", instance.getPlanId());
+				st.add("DATABASE", instance.getName());
 				return st.render();
 			}
 			

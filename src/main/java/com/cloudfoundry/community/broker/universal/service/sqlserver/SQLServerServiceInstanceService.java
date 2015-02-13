@@ -87,7 +87,7 @@ public class SQLServerServiceInstanceService implements ServiceInstanceService{
 		}
 		catch (Exception ex)
 		{
-			System.out.println(ex.getMessage() + " " + ex.getStackTrace());
+			System.err.println(ex.getMessage() + " " + ex.getStackTrace());
 			return null;
 		}
 		

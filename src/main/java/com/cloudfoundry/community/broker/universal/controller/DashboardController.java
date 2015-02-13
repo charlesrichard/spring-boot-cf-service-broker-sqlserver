@@ -19,7 +19,7 @@ public class DashboardController extends BaseController{
 	
 	@RequestMapping(value = BASE_PATH + "/{instanceId}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	@ResponseBody
-	public String dynamicHtml(@PathVariable String instanceId) {
+	public String getDashboard(@PathVariable String instanceId) {
 	    return dashboardService.getDashboard(instanceId);
 	}
 }
