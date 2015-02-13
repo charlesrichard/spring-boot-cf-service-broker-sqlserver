@@ -1,11 +1,8 @@
 package com.cloudfoundry.community.broker.universal.test.integration;
 
-
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
@@ -90,8 +87,7 @@ public class ServiceInstanceControllerIntegrationTest {
 	    		.content(body)
 	    		.accept(MediaType.APPLICATION_JSON)
 	    	)
-	    	.andExpect(status().isConflict())
-	    	.andExpect(jsonPath("$.message", containsString(instance.getId())));
+	    	.andExpect(status().isConflict());
 	    
 	    serviceInstanceService.deleteServiceInstance(instance.getId());
  	}
