@@ -7,7 +7,7 @@ import org.cloudfoundry.community.servicebroker.sqlserver.constants.EnvironmentV
 import org.cloudfoundry.community.servicebroker.util.FormattedVariableList;
 import org.stringtemplate.v4.ST;
 
-public class SQLServerRepository extends BaseJDBCRepository{
+public class SqlServerRepository extends BaseJDBCRepository{
 	
 	// Env variable keys ------------------------------------------------------------------
 	private static final String SQL_SERVER_ADMIN_DATABASE_NAME_env_key = "CF_SB_SQL_SERVER_ADMIN_DATABASE_NAME";
@@ -72,7 +72,7 @@ public class SQLServerRepository extends BaseJDBCRepository{
 	private static final String DELETE_BINDING_template = "USE [<ADMIN_DB>] DELETE FROM [binding]  WHERE instance_id = '<INSTANCE_ID>' AND binding_id = '<BINDING_ID>';";
 	// ------------------------------------------------------------------
 	
-	public SQLServerRepository() throws Exception
+	public SqlServerRepository() throws Exception
 	{
 		ST st = new ST(JDBC_template);
 		st.add("USERNAME", System.getenv(EnvironmentVarConstants.SERVICE_USERNAME_env_key));

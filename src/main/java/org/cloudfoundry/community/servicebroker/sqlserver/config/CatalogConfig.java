@@ -18,17 +18,17 @@ public class CatalogConfig {
 	public Catalog catalog() {		
 		return new Catalog( Arrays.asList(
 				new ServiceDefinition(
-					"mongo", 
-					"Mongo DB", 
-					"A simple mongo implementation", 
+					"p-sqlserver", 
+					"3101b971-1044-4816-a7ac-9ded2e028079", 
+					"SQLServer 2012 service for application development and testing", 
 					true, 
 					false,
 					Arrays.asList(
-							new Plan("mongo-plan", 
-									"Default Mongo Plan", 
-									"This is a default mongo plan.  All services are created equally.",
+							new Plan("50mb", 
+									"2451fa22-df16-4c10-ba6e-1f682d3dcdc9", 
+									"Shared SQLServer, 50mb persistent disk, 40 max concurrent connections",
 									getPlanMetadata())),
-					Arrays.asList("mongodb", "document"),
+					Arrays.asList("sqlserver", "relational"),
 					getServiceDefinitionMetadata(),
 					null,
 					null)));
@@ -38,12 +38,12 @@ public class CatalogConfig {
 	
 	private Map<String,Object> getServiceDefinitionMetadata() {
 		Map<String,Object> sdMetadata = new HashMap<String,Object>();
-		sdMetadata.put("displayName", "MongoDB");
-		sdMetadata.put("imageUrl","http://info.mongodb.com/rs/mongodb/images/MongoDB_Logo_Full.png");
-		sdMetadata.put("longDescription","MongodDB Service");
+		sdMetadata.put("displayName", "SQL Server");
+		sdMetadata.put("imageUrl","http://sqlmag.com/site-files/sqlmag.com/files/uploads/2013/11/Microsoft-SQL-Server.jpg");
+		sdMetadata.put("longDescription","SQL Server Service");
 		sdMetadata.put("providerDisplayName","Pivotal");
-		sdMetadata.put("documentationUrl","http://www.mongodb.org");
-		sdMetadata.put("supportUrl","http://www.mongodb.org");
+		sdMetadata.put("documentationUrl","http://www.microsoft.com/en-us/server-cloud/products/sql-server/");
+		sdMetadata.put("supportUrl","http://www.microsoft.com/en-us/server-cloud/products/sql-server/");
 		return sdMetadata;
 	}
 	
@@ -67,8 +67,8 @@ public class CatalogConfig {
 	}
 	
 	private List<String> getBullets() {
-		return Arrays.asList("Shared MongoDB server", 
-				"100 MB Storage (not enforced)", 
+		return Arrays.asList("Shared SQL Server server", 
+				"50 MB Storage (not enforced)", 
 				"40 concurrent connections (not enforced)");
 	}
 	

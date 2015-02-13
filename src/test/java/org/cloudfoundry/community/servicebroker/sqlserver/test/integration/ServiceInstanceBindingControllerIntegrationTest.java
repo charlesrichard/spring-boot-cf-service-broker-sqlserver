@@ -6,12 +6,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.cloudfoundry.community.servicebroker.model.ServiceDefinition;
+import org.cloudfoundry.community.servicebroker.model.ServiceInstance;
+import org.cloudfoundry.community.servicebroker.model.ServiceInstanceBinding;
+import org.cloudfoundry.community.servicebroker.model.fixture.ServiceInstanceBindingFixture;
+import org.cloudfoundry.community.servicebroker.model.fixture.ServiceInstanceFixture;
+import org.cloudfoundry.community.servicebroker.service.ServiceInstanceBindingService;
+import org.cloudfoundry.community.servicebroker.service.ServiceInstanceService;
+import org.cloudfoundry.community.servicebroker.sqlserver.service.SqlServerServiceInstanceBindingService;
+import org.cloudfoundry.community.servicebroker.sqlserver.service.SqlServerServiceInstanceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -19,14 +27,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import com.cloudfoundry.community.broker.universal.model.*;
-import com.cloudfoundry.community.broker.universal.service.*;
-import com.cloudfoundry.community.broker.universal.test.fixture.*;
-import com.cloudfoundry.community.broker.universal.constants.EnvironmentVarConstants;
-import com.cloudfoundry.community.broker.universal.constants.ServiceType;
-import com.cloudfoundry.community.broker.universal.controller.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -37,6 +37,8 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 			+ ServiceInstanceFixture.getServiceInstance().getId()
 			+ "/service_bindings";
 	
+	@Mock
+	private ServiceDefinition serviceDefinition;
 	
 	@Autowired
     private WebApplicationContext ctx;
@@ -49,10 +51,9 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build();
 		
-		ServiceType serviceType = Enum.valueOf(ServiceType.class, System.getenv(EnvironmentVarConstants.SERVICE_TYPE_env_key));
 		try {
-			serviceInstanceService = ServiceInstanceServiceFactory.getInstance(serviceType);
-			serviceInstanceBindingService = ServiceInstanceBindingServiceFactory.getInstance(serviceType);
+			serviceInstanceService = new SqlServerServiceInstanceService();
+			serviceInstanceBindingService = new SqlServerServiceInstanceBindingService();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -67,8 +68,8 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    String url = BASE_PATH + "/{bindingId}";
 	    String body = ServiceInstanceBindingFixture.getServiceInstanceBindingRequestJson();
 	    
-	    serviceInstanceService.createServiceInstance(instance.getId(),
-	    		instance.getServiceDefinitionId(), instance.getPlanId(), 
+	    serviceInstanceService.createServiceInstance(serviceDefinition, instance.getId(),
+	    		instance.getPlanId(), 
 	    		instance.getOrganizationGuid(), instance.getSpaceGuid());
 	    
 	    mockMvc.perform(
@@ -79,8 +80,8 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    	.andExpect(status().isCreated())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 	    
-	    serviceInstanceBindingService.deleteServiceInstanceBinding(instance.getId(), binding.getId());
-	    serviceInstanceService.deleteServiceInstance(instance.getId());
+	    serviceInstanceBindingService.deleteServiceInstanceBinding(binding.getId(), instance, instance.getServiceDefinitionId(), instance.getPlanId());
+	    serviceInstanceService.deleteServiceInstance(instance.getId(), instance.getServiceDefinitionId(), instance.getPlanId());
  	}
 	
 	@Test
@@ -107,11 +108,11 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    String url = BASE_PATH + "/{bindingId}";
 	    String body = ServiceInstanceBindingFixture.getServiceInstanceBindingRequestJson();
 	    
-	    serviceInstanceService.createServiceInstance(instance.getId(),
-	    		instance.getServiceDefinitionId(), instance.getPlanId(), 
+	    serviceInstanceService.createServiceInstance(serviceDefinition, instance.getId(),
+	    		instance.getPlanId(), 
 	    		instance.getOrganizationGuid(), instance.getSpaceGuid());
 	    
-	    serviceInstanceBindingService.createServiceInstanceBinding(instance, binding.getId(), binding.getAppGuid());
+	    serviceInstanceBindingService.createServiceInstanceBinding(binding.getId(), instance, instance.getServiceDefinitionId(), instance.getPlanId(), binding.getAppGuid());
 	    
 	    mockMvc.perform(
 	    		put(url, binding.getId())
@@ -120,8 +121,8 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    	)
 	    	.andExpect(status().isConflict());
 	    
-	    serviceInstanceBindingService.deleteServiceInstanceBinding(instance.getId(), binding.getId());
-	    serviceInstanceService.deleteServiceInstance(instance.getId());
+	    serviceInstanceBindingService.deleteServiceInstanceBinding(binding.getId(), instance, instance.getServiceDefinitionId(), instance.getPlanId());
+	    serviceInstanceService.deleteServiceInstance(instance.getId(), instance.getServiceDefinitionId(), instance.getPlanId());
  	}	
 	
 	@Test
@@ -129,11 +130,9 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    ServiceInstance instance = ServiceInstanceFixture.getServiceInstance();
 	    ServiceInstanceBinding binding = ServiceInstanceBindingFixture.getServiceInstanceBinding();
 		
-	    serviceInstanceService.createServiceInstance(instance.getId(),
-	    		instance.getServiceDefinitionId(), instance.getPlanId(), 
-	    		instance.getOrganizationGuid(), instance.getSpaceGuid());
+	    serviceInstanceBindingService.createServiceInstanceBinding(binding.getId(), instance, instance.getServiceDefinitionId(), instance.getPlanId(), binding.getAppGuid());
 	    
-	    serviceInstanceBindingService.createServiceInstanceBinding(instance, binding.getId(), binding.getAppGuid());
+	    serviceInstanceBindingService.createServiceInstanceBinding(binding.getId(), instance, instance.getServiceDefinitionId(), instance.getPlanId(), binding.getAppGuid());
 	    
 	    String url = BASE_PATH + "/" + binding.getId() 
 	    		+ "?service_id=" + instance.getServiceDefinitionId()
@@ -145,7 +144,7 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    	.andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 	    
-	    serviceInstanceService.deleteServiceInstance(instance.getId());
+	    serviceInstanceService.deleteServiceInstance(instance.getId(), instance.getServiceDefinitionId(), instance.getPlanId());
  	}
 	
 	@Test
@@ -162,19 +161,4 @@ public class ServiceInstanceBindingControllerIntegrationTest {
 	    	)
 	    	.andExpect(status().isNotFound());
  	}
-
-	@Configuration
-    @EnableWebMvc
-    public static class TestConfiguration {
- 
-        @Bean
-        public ServiceInstanceController ServiceInstanceController() throws Exception {
-            return new ServiceInstanceController();
-        }
-        
-        @Bean
-        public ServiceInstanceBindingController ServiceInstanceBinningController() throws Exception {
-            return new ServiceInstanceBindingController();
-        }
-    }
 }

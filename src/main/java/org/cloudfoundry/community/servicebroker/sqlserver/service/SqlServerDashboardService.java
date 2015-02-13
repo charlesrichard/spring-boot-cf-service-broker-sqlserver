@@ -2,11 +2,11 @@ package org.cloudfoundry.community.servicebroker.sqlserver.service;
 
 import org.cloudfoundry.community.servicebroker.sqlserver.constants.EnvironmentVarConstants;
 import org.cloudfoundry.community.servicebroker.sqlserver.repository.RepositoryResponse;
-import org.cloudfoundry.community.servicebroker.sqlserver.repository.SQLServerRepository;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.SqlServerRepository;
+import org.springframework.stereotype.Service;
 import org.stringtemplate.v4.ST;
 
-import com.cloudfoundry.community.broker.universal.service.*;
-
+@Service
 public class SqlServerDashboardService implements DashboardService {
 	private static final char ST_DELIMITER = '$';
 	private static final String INSTANCE_NOT_FOUND_TEMPLATE = "<html><body>Instance not found.</body></html>";
@@ -28,7 +28,7 @@ public class SqlServerDashboardService implements DashboardService {
 	
 	public String getDashboard(String instanceId) {
 		try {
-			SQLServerRepository adminRepo = new SQLServerRepository();
+			SqlServerRepository adminRepo = new SqlServerRepository();
 			RepositoryResponse instance = adminRepo.getInstance(instanceId);
 			if(instance == null)
 				return INSTANCE_NOT_FOUND_TEMPLATE;

@@ -9,30 +9,37 @@ import org.cloudfoundry.community.servicebroker.model.ServiceInstanceBinding;
 import org.cloudfoundry.community.servicebroker.service.ServiceInstanceBindingService;
 import org.cloudfoundry.community.servicebroker.sqlserver.constants.IdentifierConstants;
 import org.cloudfoundry.community.servicebroker.sqlserver.repository.RepositoryResponse;
-import org.cloudfoundry.community.servicebroker.sqlserver.repository.SQLServerRepository;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.SqlServerRepository;
 import org.cloudfoundry.community.servicebroker.util.FormattedVariableList;
 import org.cloudfoundry.community.servicebroker.util.RandomString;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class SqlServerServiceInstanceBindingService implements ServiceInstanceBindingService 
 {
-	private static SQLServerRepository adminRepo;
+	private static SqlServerRepository adminRepo;
 	public static final String DRDW_USERNAME_SUFFIX = "_drdw";
 	
 	public SqlServerServiceInstanceBindingService() throws Exception {
-		adminRepo = new SQLServerRepository();
+		adminRepo = new SqlServerRepository();
 		FormattedVariableList missingEnvironmentVariables = adminRepo.validateEnvironmentVariables();
 		
 		if(!missingEnvironmentVariables.isEmpty())
 			throw new IllegalStateException("The following required environment variables are missing: " + missingEnvironmentVariables.toString());
 	}
 	
+	@Override
 	public ServiceInstanceBinding createServiceInstanceBinding(
-			ServiceInstance instance, String bindingId, String applicationId)
-			throws ServiceInstanceBindingExistsException, ServiceBrokerException, Exception
+			String bindingId, ServiceInstance instance, String serviceId, String planId, String applicationId)
+			throws ServiceInstanceBindingExistsException, ServiceBrokerException
 	{		
 		// Really sucks we have to make this call, but it is the only way to get the dbname out!
-		RepositoryResponse repositoryInstance = adminRepo.getInstance(instance.getId());
+		RepositoryResponse repositoryInstance = null;
+		try {
+			repositoryInstance = adminRepo.getInstance(instance.getId());
+		} catch (Exception e) {
+			throw new ServiceBrokerException(e);
+		}
 		
 		String instanceId = instance.getId();
 		String serviceDefinitionId = instance.getServiceDefinitionId();
@@ -50,8 +57,12 @@ public class SqlServerServiceInstanceBindingService implements ServiceInstanceBi
 		credentials.put(IdentifierConstants.CREDENTIALS_PASSWORD, password);
 		credentials.put(IdentifierConstants.CREDENTIALS_URI, uri);
 		
-		adminRepo.createDrDwUser(databaseName, username, password);
-		adminRepo.registerBinding(instanceId, bindingId, applicationId, username, password);
+		try {
+			adminRepo.createDrDwUser(databaseName, username, password);
+			adminRepo.registerBinding(instanceId, bindingId, applicationId, username, password);
+		} catch (Exception e) {
+			throw new ServiceBrokerException(e);
+		}
 		
 		return new ServiceInstanceBinding(instanceId, serviceDefinitionId, credentials, null, applicationId);
 	}
@@ -84,33 +95,28 @@ public class SqlServerServiceInstanceBindingService implements ServiceInstanceBi
 		return new ServiceInstanceBinding(instanceId, bindingId, credentials, null, applicationId);
 	}
 
-	public ServiceInstanceBinding deleteServiceInstanceBinding(String instanceId, String bindingId) throws ServiceBrokerException, Exception
+	@Override
+	public ServiceInstanceBinding deleteServiceInstanceBinding(String bindingId, ServiceInstance instance, 
+			String serviceId, String planId) throws ServiceBrokerException
 	{
-		ServiceInstanceBinding binding = getServiceInstanceBinding(instanceId, bindingId);
+		ServiceInstanceBinding binding = null;
+		try {
+			binding = getServiceInstanceBinding(instance.getId(), bindingId);
+		} catch (Exception e) {
+			throw new ServiceBrokerException(e);
+		}
+		
 		if(binding == null)
 			return null;
 		
-		adminRepo.deleteBinding(instanceId, bindingId);
-		adminRepo.dropUser(binding.getCredentials().get(IdentifierConstants.CREDENTIALS_USERNAME).toString());
+		try {
+			adminRepo.deleteBinding(instance.getId(), bindingId);
+			adminRepo.dropUser(binding.getCredentials().get(IdentifierConstants.CREDENTIALS_USERNAME).toString());
+		} catch (Exception e) {
+			throw new ServiceBrokerException(e);
+		}
 		
 		// since the deletion was successful, return the bindinginstance
-		return new ServiceInstanceBinding(instanceId, bindingId, null, null, null);
-	}
-
-	@Override
-	public ServiceInstanceBinding createServiceInstanceBinding(String arg0,
-			ServiceInstance arg1, String arg2, String arg3, String arg4)
-			throws ServiceInstanceBindingExistsException,
-			ServiceBrokerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ServiceInstanceBinding deleteServiceInstanceBinding(String arg0,
-			ServiceInstance arg1, String arg2, String arg3)
-			throws ServiceBrokerException {
-		// TODO Auto-generated method stub
-		return null;
+		return new ServiceInstanceBinding(instance.getId(), bindingId, null, null, null);
 	}
 }

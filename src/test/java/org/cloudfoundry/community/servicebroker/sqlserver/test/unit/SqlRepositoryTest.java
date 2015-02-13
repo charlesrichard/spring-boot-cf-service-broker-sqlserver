@@ -4,34 +4,33 @@ import static org.junit.Assert.*;
 
 import java.util.UUID;
 
+import org.cloudfoundry.community.servicebroker.sqlserver.constants.IdentifierConstants;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.RepositoryResponse;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.SqlServerRepository;
+import org.cloudfoundry.community.servicebroker.util.FormattedVariableList;
+import org.cloudfoundry.community.servicebroker.util.RandomString;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.cloudfoundry.community.broker.universal.constants.IdentifierConstants;
-import com.cloudfoundry.community.broker.universal.repository.RepositoryResponse;
-import com.cloudfoundry.community.broker.universal.repository.SQLServerRepository;
-import com.cloudfoundry.community.broker.universal.util.FormattedVariableList;
-import com.cloudfoundry.community.broker.universal.util.RandomString;
 
 /**
  * @author Chuck Svoboda
  *
  */
-public class SQLRepositoryTest {
+public class SqlRepositoryTest {
 	private static final String DBO_USERNAME_SUFFIX = "_dbo";
 	private static final String DRDW_USERNAME_SUFFIX = "_drdw";
 	private static final String PLAN_ID = "5";
 	private static final String SERVICE_DEFINITION_ID = "2313213132132";
 	private static final int RANDOM_STRING_LENGTH = 5;
 	private static final String FIXTURE_PASSWORD = "Password1234";
-	private static SQLServerRepository repo;
+	private static SqlServerRepository repo;
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		repo = new SQLServerRepository();
+		repo = new SqlServerRepository();
 		FormattedVariableList missingEnvironmentVariables = repo.validateEnvironmentVariables();
 		
 		if(!missingEnvironmentVariables.isEmpty())

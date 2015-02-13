@@ -11,47 +11,65 @@ import org.cloudfoundry.community.servicebroker.model.ServiceInstance;
 import org.cloudfoundry.community.servicebroker.service.ServiceInstanceService;
 import org.cloudfoundry.community.servicebroker.sqlserver.constants.IdentifierConstants;
 import org.cloudfoundry.community.servicebroker.sqlserver.repository.RepositoryResponse;
-import org.cloudfoundry.community.servicebroker.sqlserver.repository.SQLServerRepository;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.SqlServerRepository;
 import org.cloudfoundry.community.servicebroker.util.FormattedVariableList;
 import org.cloudfoundry.community.servicebroker.util.RandomString;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+@Service
 public class SqlServerServiceInstanceService implements ServiceInstanceService{	
-	private static SQLServerRepository adminRepo;
+	private static SqlServerRepository adminRepo;
 	public static final String DBO_USERNAME_SUFFIX = "_dbo";
 	
 	public SqlServerServiceInstanceService() throws Exception {
-		adminRepo = new SQLServerRepository();
+		adminRepo = new SqlServerRepository();
 		FormattedVariableList missingEnvironmentVariables = adminRepo.validateEnvironmentVariables();
 		
 		if(!missingEnvironmentVariables.isEmpty())
 			throw new IllegalStateException("The following required environment variables are missing: " + missingEnvironmentVariables.toString());
 	}
 	
-	public ServiceInstance createServiceInstance(String instanceId,
-			String serviceDefinitionId, String planId, String organizationId, String spaceId)
-			throws ServiceInstanceExistsException, ServiceBrokerException, Exception {
+	@Override
+	public ServiceInstance createServiceInstance(ServiceDefinition serviceDefinition, String instanceId,
+			String planId, String organizationId, String spaceId)
+			throws ServiceInstanceExistsException, ServiceBrokerException {
 
-		RepositoryResponse instance = adminRepo.getInstance(instanceId);
+		RepositoryResponse instance;
+		try {
+			instance = adminRepo.getInstance(instanceId);
+		} catch (Exception e) {
+			throw new ServiceBrokerException(e);
+		}
 		if(instance != null) // one already exists, so we need to return an exception
 			throw new ServiceInstanceExistsException(new ServiceInstance(instanceId, instanceId, null, null, null, null));
 		
 		String databaseName = IdentifierConstants.DATABASE_NAME_PREFIX + RandomString.generateRandomString(IdentifierConstants.RANDOM_STRING_LENGTH);
 		String username = databaseName + DBO_USERNAME_SUFFIX;
 		String password = RandomString.generateRandomString(IdentifierConstants.RANDOM_STRING_LENGTH);
-		adminRepo.createDatabase(databaseName);
-		adminRepo.performSmokeTest(databaseName, true);
-		adminRepo.cleanupSmokeTest(databaseName, true);
-		adminRepo.registerInstance(instanceId, organizationId, spaceId, serviceDefinitionId, planId, databaseName, username, password);
-		adminRepo.createDboUser(databaseName, username, password);
+		try {
+			adminRepo.createDatabase(databaseName);
+			adminRepo.performSmokeTest(databaseName, true);
+			adminRepo.cleanupSmokeTest(databaseName, true);
+			adminRepo.registerInstance(instanceId, organizationId, spaceId, serviceDefinition.getId(), planId, databaseName, username, password);
+			adminRepo.createDboUser(databaseName, username, password);
+		} catch (Exception e) {
+			throw new ServiceBrokerException(e);
+		}
 		
 		return new ServiceInstance(instanceId, databaseName, planId, 
 				organizationId, spaceId, getDashboardUrl(instanceId));
 	}
 
-	public ServiceInstance getServiceInstance(String instanceId) throws Exception {
-		RepositoryResponse instance = adminRepo.getInstance(instanceId);
+	public ServiceInstance getServiceInstance(String instanceId) {
+		RepositoryResponse instance = null;
+		try {
+			instance = adminRepo.getInstance(instanceId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 		if(instance == null) // the instance does not exist so we return null
 			return null;
 		
@@ -60,21 +78,39 @@ public class SqlServerServiceInstanceService implements ServiceInstanceService{
 				instance.getOrganizationId(), instance.getSpaceId().toString(), getDashboardUrl(instanceId));
 	}
 
-	public ServiceInstance deleteServiceInstance(String instanceId)
-			throws ServiceBrokerException, Exception {
+	@Override
+	public ServiceInstance deleteServiceInstance(String instanceId, String serviceId, String planId)
+			throws ServiceBrokerException {
 		
 		//check to see if there is the service instance exists
-		RepositoryResponse instance = adminRepo.getInstance(instanceId);
+		RepositoryResponse instance = null;
+		try {
+			instance = adminRepo.getInstance(instanceId);
+		} catch (Exception e) {
+			throw new ServiceBrokerException(e);
+		}
 		if(instance == null) // instance does not exist, so there is nothing to delete
 			return null; // the instance does not exist
 		
 		// the instance exists, so delete it 
-		adminRepo.deleteInstance(instanceId);
-		adminRepo.dropUser(instance.getInstanceUsername());
-		adminRepo.dropDatabase(instance.getName());
+		try {
+			adminRepo.deleteInstance(instanceId);
+			adminRepo.dropUser(instance.getInstanceUsername());
+			adminRepo.dropDatabase(instance.getName());
+		} catch (Exception e) {
+			throw new ServiceBrokerException(e);
+		}
 		
 		// expected return is of this type
 		return new ServiceInstance(instanceId, instanceId, null, null, null, null);
+	}
+	
+	@Override
+	public ServiceInstance updateServiceInstance(String arg0, String arg1)
+			throws ServiceInstanceUpdateNotSupportedException,
+			ServiceBrokerException, ServiceInstanceDoesNotExistException {
+		
+		throw new ServiceInstanceUpdateNotSupportedException("Method not yet implemented.");
 	}
 	
 	// I hate this method, but this is how we are going to craft the dashboard URL
@@ -89,33 +125,10 @@ public class SqlServerServiceInstanceService implements ServiceInstanceService{
 		}
 		catch (Exception ex)
 		{
-			System.err.println(ex.getMessage() + " " + ex.getStackTrace());
+			ex.printStackTrace();
 			return null;
 		}
 		
 		return request.getScheme() + "://" + request.getServerName() + IdentifierConstants.DASHBOARD_BASE_PATH + "/" + instanceid;
-	}
-
-	@Override
-	public ServiceInstance createServiceInstance(ServiceDefinition arg0,
-			String arg1, String arg2, String arg3, String arg4)
-			throws ServiceInstanceExistsException, ServiceBrokerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ServiceInstance deleteServiceInstance(String arg0, String arg1,
-			String arg2) throws ServiceBrokerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ServiceInstance updateServiceInstance(String arg0, String arg1)
-			throws ServiceInstanceUpdateNotSupportedException,
-			ServiceBrokerException, ServiceInstanceDoesNotExistException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
