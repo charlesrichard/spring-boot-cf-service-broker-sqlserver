@@ -258,9 +258,9 @@ public class SQLServerRepository extends BaseJDBCRepository{
 		
 		Map<String, Object> binding = result.get(0);
 		return new RepositoryResponse(binding.get("instance_id").toString(), 
+				binding.get("binding_id").toString(),
 				binding.get("organization_id").toString(), binding.get("space_id").toString(), 
 				binding.get("instance_db").toString(), binding.get("application_id").toString(), 
-				binding.get("binding_id").toString(), 
 				binding.get("instance_username").toString(), binding.get("instance_password").toString(), 
 				binding.get("binding_username").toString(), binding.get("binding_password").toString());
 	}
