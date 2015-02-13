@@ -1,6 +1,8 @@
 package com.cloudfoundry.community.broker.universal.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,7 @@ public class DashboardController extends BaseController{
 	
 	@RequestMapping(value = BASE_PATH + "/{instanceId}", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	@ResponseBody
-	public String getDashboard(@PathVariable String instanceId) {
-	    return dashboardService.getDashboard(instanceId);
+	public ResponseEntity<String> getDashboard(@PathVariable String instanceId) {
+	    return new ResponseEntity<String>(dashboardService.getDashboard(instanceId), HttpStatus.OK);
 	}
 }
