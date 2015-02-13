@@ -24,8 +24,6 @@ public abstract class BaseJDBCRepository {
 	{
 		FormattedVariableList missingVariables = new FormattedVariableList();
 		
-		if(System.getenv(EnvironmentVarConstants.SERVICE_TYPE_env_key) == null)
-			missingVariables.add(EnvironmentVarConstants.SERVICE_USERNAME_env_key);
 		if(System.getenv(EnvironmentVarConstants.SERVICE_HOST_env_key) == null)
 			missingVariables.add(EnvironmentVarConstants.SERVICE_HOST_env_key);
 		if(System.getenv(EnvironmentVarConstants.SERVICE_PORT_env_key) == null)
