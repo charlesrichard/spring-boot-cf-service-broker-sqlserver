@@ -13,7 +13,7 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager() throws Exception {
         return new AuthenticationManagerBuilder(new NopPostProcessor())
                        .inMemoryAuthentication().withUser("admin").password("password").roles("ADMIN")
-                       .and().and().build();
+                       .and().withUser("user").password("password").roles("USER").and().and().build();
     }
 
     private static class NopPostProcessor implements ObjectPostProcessor {
