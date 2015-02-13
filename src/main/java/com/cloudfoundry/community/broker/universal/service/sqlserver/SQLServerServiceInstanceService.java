@@ -1,5 +1,10 @@
 package com.cloudfoundry.community.broker.universal.service.sqlserver;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import com.cloudfoundry.community.broker.universal.constants.IdentifierConstants;
 import com.cloudfoundry.community.broker.universal.exception.ServiceBrokerException;
 import com.cloudfoundry.community.broker.universal.exception.ServiceInstanceExistsException;
@@ -10,9 +15,9 @@ import com.cloudfoundry.community.broker.universal.service.ServiceInstanceServic
 import com.cloudfoundry.community.broker.universal.util.FormattedVariableList;
 import com.cloudfoundry.community.broker.universal.util.RandomString;
 
-public class SQLServerServiceInstanceService implements ServiceInstanceService{
+public class SQLServerServiceInstanceService implements ServiceInstanceService{	
 	private static SQLServerRepository adminRepo;
-	private static String DASHBOARD_URL = "http://www.microsoft.com/en-us/server-cloud/products/sql-server/";
+	public static final String DBO_USERNAME_SUFFIX = "_dbo";
 	
 	public SQLServerServiceInstanceService() throws Exception {
 		adminRepo = new SQLServerRepository();
@@ -31,13 +36,16 @@ public class SQLServerServiceInstanceService implements ServiceInstanceService{
 			throw new ServiceInstanceExistsException(new ServiceInstance(instanceId, instanceId, null, null, null, null));
 		
 		String databaseName = IdentifierConstants.DATABASE_NAME_PREFIX + RandomString.generateRandomString(IdentifierConstants.RANDOM_STRING_LENGTH);
+		String username = databaseName + DBO_USERNAME_SUFFIX;
+		String password = RandomString.generateRandomString(IdentifierConstants.RANDOM_STRING_LENGTH);
 		adminRepo.createDatabase(databaseName);
 		adminRepo.performSmokeTest(databaseName, true);
 		adminRepo.cleanupSmokeTest(databaseName, true);
-		adminRepo.registerInstance(instanceId, organizationId, spaceId, serviceDefinitionId, planId, databaseName);
+		adminRepo.registerInstance(instanceId, organizationId, spaceId, serviceDefinitionId, planId, databaseName, username, password);
+		adminRepo.createDboUser(databaseName, username, password);
 		
 		return new ServiceInstance(instanceId, databaseName, planId, 
-				organizationId, spaceId, DASHBOARD_URL);
+				organizationId, spaceId, getDashboardUrl(instanceId));
 	}
 
 	public ServiceInstance getServiceInstance(String instanceId) throws Exception {
@@ -47,7 +55,7 @@ public class SQLServerServiceInstanceService implements ServiceInstanceService{
 		
 		return new ServiceInstance(instance.getInstanceId(), instance.getName(), 
 				instance.getPlanId(), 
-				instance.getOrganizationId(), instance.getSpaceId().toString(), DASHBOARD_URL);
+				instance.getOrganizationId(), instance.getSpaceId().toString(), getDashboardUrl(instanceId));
 	}
 
 	public ServiceInstance deleteServiceInstance(String instanceId)
@@ -60,10 +68,29 @@ public class SQLServerServiceInstanceService implements ServiceInstanceService{
 		
 		// the instance exists, so delete it 
 		adminRepo.deleteInstance(instanceId);
+		adminRepo.dropUser(instance.getInstanceUsername());
 		adminRepo.dropDatabase(instance.getName());
 		
 		// expected return is of this type
 		return new ServiceInstance(instanceId, instanceId, null, null, null, null);
 	}
 	
+	// I hate this method, but this is how we are going to craft the dashboard URL
+	private String getDashboardUrl(String instanceid)
+	{
+		HttpServletRequest request;
+		
+		// purpose of this try/catch is for unit testing where a servlet context may not exist
+		try
+		{
+			request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		}
+		catch (Exception ex)
+		{
+			System.out.println(ex.getMessage() + " " + ex.getStackTrace());
+			return null;
+		}
+		
+		return request.getScheme() + "://" + request.getServerName() + IdentifierConstants.DASHBOARD_BASE_PATH + "/" + instanceid;
+	}
 }

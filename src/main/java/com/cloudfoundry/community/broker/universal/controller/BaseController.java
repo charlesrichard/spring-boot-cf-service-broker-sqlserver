@@ -31,6 +31,7 @@ public abstract class BaseController {
 	protected ServiceInstanceBindingService serviceInstanceBindingService;
 	protected ServiceInstanceService serviceInstanceService;
 	protected CatalogService catalogService;
+	protected DashboardService dashboardService;
 	
 	public BaseController()
 	{

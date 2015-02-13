@@ -33,16 +33,21 @@ public class SQLServerRepository extends BaseJDBCRepository{
 	
 	// Instance registry scripts ------------------------------------------------------------------
 	// Define $ADMIN_DB$, $INSTANCE_ID$, $ORGANIZATION_ID$, $INSTANCE_DB$, $SPACE_ID$, $USERNAME$, and $PASSWORD$
-	private static final String REGISTER_INSTANCE_template = "USE [<ADMIN_DB>] INSERT INTO [instance] VALUES ('<INSTANCE_ID>', '<ORGANIZATION_ID>', '<SPACE_ID>', '<SERVICE_DEFINITION_ID>', '<PLAN_ID>', '<INSTANCE_DB>', CURRENT_TIMESTAMP);";
+	private static final String REGISTER_INSTANCE_template = "USE [<ADMIN_DB>] INSERT INTO [instance] VALUES ('<INSTANCE_ID>', '<ORGANIZATION_ID>', '<SPACE_ID>', '<SERVICE_DEFINITION_ID>', '<PLAN_ID>', '<INSTANCE_DB>', '<USERNAME>','<PASSWORD>',CURRENT_TIMESTAMP);";
 	// Define $ADMIN_DB$ and $INSTANCE_ID$
-	private static final String GET_INSTANCE_template = "USE [<ADMIN_DB>] SELECT i.instance_id, i.organization_id, i.space_id, i.service_definition_id, i.plan_id, i.instance_db FROM [instance] i with(nolock) WHERE i.instance_id = '<INSTANCE_ID>';";
+	private static final String GET_INSTANCE_template = "USE [<ADMIN_DB>] SELECT i.instance_id, i.organization_id, i.space_id, i.service_definition_id, i.plan_id, i.instance_db, i.username, i.password FROM [instance] i with(nolock) WHERE i.instance_id = '<INSTANCE_ID>';";
 	// Define $ADMIN_DB$, and $INSTANCE_ID$ 
 	private static final String DELETE_INSTANCE_template = "USE [<ADMIN_DB>] DELETE FROM [instance] WHERE instance_id = '<INSTANCE_ID>';";
 	// ------------------------------------------------------------------
 	
 	// Binding user creation scripts ------------------------------------------------------------------
 	// Define $MASTER_DB$, $INSTANCE_DB$, $INSTANCE_USERNAME$, and $INSTANCE_PASSWORD$
-	private static final String CREATE_USER_template = "USE [<MASTER_DB>] CREATE LOGIN [<INSTANCE_USERNAME>] WITH PASSWORD=N'<INSTANCE_PASSWORD>', DEFAULT_DATABASE=[<INSTANCE_DB>], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF USE [<INSTANCE_DB>] CREATE USER [<INSTANCE_USERNAME>] FOR LOGIN [<INSTANCE_USERNAME>] USE [<INSTANCE_DB>] ALTER USER [<INSTANCE_USERNAME>] WITH DEFAULT_SCHEMA=[dbo] USE [<INSTANCE_DB>] ALTER ROLE [db_owner] ADD MEMBER [<INSTANCE_USERNAME>];";
+	private static final String CREATE_DBO_USER_template = "USE [<MASTER_DB>] CREATE LOGIN [<INSTANCE_USERNAME>] WITH PASSWORD=N'<INSTANCE_PASSWORD>', DEFAULT_DATABASE=[<INSTANCE_DB>], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF USE [<INSTANCE_DB>] CREATE USER [<INSTANCE_USERNAME>] FOR LOGIN [<INSTANCE_USERNAME>] USE [<INSTANCE_DB>] ALTER USER [<INSTANCE_USERNAME>] WITH DEFAULT_SCHEMA=[dbo] USE [<INSTANCE_DB>] ALTER ROLE [db_owner] ADD MEMBER [<INSTANCE_USERNAME>];";
+	// ------------------------------------------------------------------
+	
+	// Binding user creation scripts ------------------------------------------------------------------
+	// Define $MASTER_DB$, $INSTANCE_DB$, $INSTANCE_USERNAME$, and $INSTANCE_PASSWORD$
+	private static final String CREATE_DR_DW_USER_template = "USE [<MASTER_DB>] CREATE LOGIN [<INSTANCE_USERNAME>] WITH PASSWORD=N'<INSTANCE_PASSWORD>', DEFAULT_DATABASE=[<INSTANCE_DB>], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF USE [<INSTANCE_DB>] CREATE USER [<INSTANCE_USERNAME>] FOR LOGIN [<INSTANCE_USERNAME>] USE [<INSTANCE_DB>] ALTER USER [<INSTANCE_USERNAME>] WITH DEFAULT_SCHEMA=[dbo] USE [<INSTANCE_DB>] ALTER ROLE [db_datawriter] ADD MEMBER [<INSTANCE_USERNAME>] USE [<INSTANCE_DB>] ALTER ROLE [db_datareader] ADD MEMBER [<INSTANCE_USERNAME>];";
 	// ------------------------------------------------------------------
 	
 	// Smoke Test scripts ------------------------------------------------------------------
@@ -63,7 +68,7 @@ public class SQLServerRepository extends BaseJDBCRepository{
 	// Define $ADMIN_DB$, $APPLICATION_ID$, $INSTANCE_USERNAME$, $INSTANCE_PASSWORD$, $BINDING_ID$, and $INSTANCE_ID$
 	private static final String REGISTER_BINDING_template = "USE [<ADMIN_DB>] INSERT INTO [binding] VALUES ('<BINDING_ID>', '<INSTANCE_ID>', '<APPLICATION_ID>', '<INSTANCE_USERNAME>', '<INSTANCE_PASSWORD>', CURRENT_TIMESTAMP);";
 	// Define $ADMIN_DB$, $BINDING_ID$, and $INSTANCE_ID$
-	private static final String GET_BINDING_template = "USE [<ADMIN_DB>] SELECT i.instance_id, organization_id, space_id, instance_db, application_id, binding_id, username, password FROM [binding] b with(nolock) INNER JOIN [instance] i with(nolock) ON b.instance_id = i.instance_id WHERE b.instance_id = '<INSTANCE_ID>' AND b.binding_id = '<BINDING_ID>';";
+	private static final String GET_BINDING_template = "USE [<ADMIN_DB>] SELECT i.instance_id, organization_id, space_id, instance_db, application_id, binding_id, i.username AS instance_username, i.password AS instance_password, b.username AS binding_username, b.password AS binding_password FROM [binding] b with(nolock) INNER JOIN [instance] i with(nolock) ON b.instance_id = i.instance_id WHERE b.instance_id = '<INSTANCE_ID>' AND b.binding_id = '<BINDING_ID>';";
 	// Define $ADMIN_DB$, $BINDING_ID$, and $INSTANCE_ID$ 
 	private static final String DELETE_BINDING_template = "USE [<ADMIN_DB>] DELETE FROM [binding]  WHERE instance_id = '<INSTANCE_ID>' AND binding_id = '<BINDING_ID>';";
 	// ------------------------------------------------------------------
@@ -151,7 +156,7 @@ public class SQLServerRepository extends BaseJDBCRepository{
 			throw new Exception("InstanceConnection must be instantiated if performAsAdmin is set to false");
 	}
 	
-	public void registerInstance(String instanceId, String organizationId, String spaceId, String serviceDefinitionId, String planId, String databaseName) throws Exception
+	public void registerInstance(String instanceId, String organizationId, String spaceId, String serviceDefinitionId, String planId, String databaseName, String username, String password) throws Exception
 	{
 		ST st = new ST(REGISTER_INSTANCE_template);
 		st.add("ADMIN_DB", System.getenv(SQL_SERVER_ADMIN_DATABASE_NAME_env_key));
@@ -161,6 +166,8 @@ public class SQLServerRepository extends BaseJDBCRepository{
 		st.add("PLAN_ID", planId);
 		st.add("INSTANCE_DB", databaseName);
 		st.add("SERVICE_DEFINITION_ID", serviceDefinitionId);
+		st.add("USERNAME", username);
+		st.add("PASSWORD", password);
 		adminDatabase.execute(st.render());
 	}
 	
@@ -194,12 +201,23 @@ public class SQLServerRepository extends BaseJDBCRepository{
 		return new RepositoryResponse(instance.get("instance_id").toString(), 
 				instance.get("organization_id").toString(), instance.get("service_definition_id").toString(),
 				instance.get("plan_id").toString(), instance.get("space_id").toString(), 
-				instance.get("instance_db").toString());
+				instance.get("instance_db").toString(), instance.get("username").toString(),
+				instance.get("password").toString());
 	}
 	
-	public void createUser(String databaseName, String username, String password) throws Exception
+	public void createDboUser(String databaseName, String username, String password) throws Exception
 	{
-		ST st = new ST(CREATE_USER_template);
+		ST st = new ST(CREATE_DBO_USER_template);
+		st.add("MASTER_DB", MASTER_DB);
+		st.add("INSTANCE_DB", databaseName);
+		st.add("INSTANCE_USERNAME", username);
+		st.add("INSTANCE_PASSWORD", password);
+		adminDatabase.execute(st.render());
+	}
+	
+	public void createDrDwUser(String databaseName, String username, String password) throws Exception
+	{
+		ST st = new ST(CREATE_DR_DW_USER_template);
 		st.add("MASTER_DB", MASTER_DB);
 		st.add("INSTANCE_DB", databaseName);
 		st.add("INSTANCE_USERNAME", username);
@@ -242,7 +260,9 @@ public class SQLServerRepository extends BaseJDBCRepository{
 		return new RepositoryResponse(binding.get("instance_id").toString(), 
 				binding.get("organization_id").toString(), binding.get("space_id").toString(), 
 				binding.get("instance_db").toString(), binding.get("application_id").toString(), 
-				binding.get("binding_id").toString(), binding.get("username").toString(), binding.get("password").toString());
+				binding.get("binding_id").toString(), 
+				binding.get("instance_username").toString(), binding.get("instance_password").toString(), 
+				binding.get("binding_username").toString(), binding.get("binding_password").toString());
 	}
 	
 	public void deleteBinding(String instanceId, String bindingId) throws Exception

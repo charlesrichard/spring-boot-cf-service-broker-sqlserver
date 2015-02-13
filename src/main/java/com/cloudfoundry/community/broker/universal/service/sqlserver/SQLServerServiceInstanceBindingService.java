@@ -16,6 +16,7 @@ import com.cloudfoundry.community.broker.universal.util.RandomString;
 public class SQLServerServiceInstanceBindingService implements ServiceInstanceBindingService 
 {
 	private static SQLServerRepository adminRepo;
+	public static final String DRDW_USERNAME_SUFFIX = "_drdw";
 	
 	public SQLServerServiceInstanceBindingService() throws Exception {
 		adminRepo = new SQLServerRepository();
@@ -35,7 +36,7 @@ public class SQLServerServiceInstanceBindingService implements ServiceInstanceBi
 		String instanceId = instance.getId();
 		String serviceDefinitionId = instance.getServiceDefinitionId();
 		String databaseName = repositoryInstance.getName();
-		String username = databaseName + IdentifierConstants.USERNAME_SUFFIX;
+		String username = databaseName + DRDW_USERNAME_SUFFIX;
 		String password = RandomString.generateRandomString(IdentifierConstants.RANDOM_STRING_LENGTH);
 		String host = adminRepo.getHost();
 		String port = adminRepo.getPort();
@@ -48,7 +49,7 @@ public class SQLServerServiceInstanceBindingService implements ServiceInstanceBi
 		credentials.put(IdentifierConstants.CREDENTIALS_PASSWORD, password);
 		credentials.put(IdentifierConstants.CREDENTIALS_URI, uri);
 		
-		adminRepo.createUser(databaseName, username, password);
+		adminRepo.createDrDwUser(databaseName, username, password);
 		adminRepo.registerBinding(instanceId, bindingId, applicationId, username, password);
 		
 		return new ServiceInstanceBinding(instanceId, serviceDefinitionId, credentials, null, applicationId);
@@ -65,8 +66,8 @@ public class SQLServerServiceInstanceBindingService implements ServiceInstanceBi
 			return null; // none are found, so return null
 		
 		String databaseName = instance.getName();
-		String username = binding.getUsername();
-		String password = binding.getPassword();
+		String username = binding.getBindingUsername();
+		String password = binding.getBindingPassword();
 		String applicationId = binding.getApplicationId();
 		String host = adminRepo.getHost();
 		String port = adminRepo.getPort();

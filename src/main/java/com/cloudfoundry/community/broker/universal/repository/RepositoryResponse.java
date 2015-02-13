@@ -2,8 +2,10 @@ package com.cloudfoundry.community.broker.universal.repository;
 
 public class RepositoryResponse {
 	private String name;
-	private String username;
-	private String password;
+	private String instanceUsername;
+	private String instancePassword;
+	private String bindingUsername;
+	private String bindingPassword;
 	private String host;
 	private String port;
 	private String instanceId;
@@ -18,9 +20,10 @@ public class RepositoryResponse {
 	{
 	}
 	
-	public RepositoryResponse(String instanceId, String organizationId, 
-			String spaceId, String name, String applicationId, String bindingId, 
-			String username, String password)
+	public RepositoryResponse(String instanceId, String bindingId, String organizationId, 
+			String spaceId, String name, String applicationId, 
+			String instanceUsername, String instancePassword,
+			String bindingUsername, String bindingPassword)
 	{
 		this.instanceId = instanceId;
 		this.organizationId = organizationId;
@@ -28,12 +31,14 @@ public class RepositoryResponse {
 		this.name = name;
 		this.applicationId = applicationId;
 		this.bindingId = bindingId;
-		this.username = username;
-		this.password = password;
+		this.instanceUsername = instanceUsername;
+		this.instancePassword = instancePassword;
+		this.bindingUsername = bindingUsername;
+		this.bindingPassword = bindingPassword;
 	}
 	
 	public RepositoryResponse(String instanceId, String organizationId, 
-			String spaceId, String serviceDefinitionId, String planId, String name)
+			String spaceId, String serviceDefinitionId, String planId, String name, String instanceUsername, String instancePassword)
 	{
 		this.instanceId = instanceId;
 		this.organizationId = organizationId;
@@ -41,6 +46,8 @@ public class RepositoryResponse {
 		this.serviceDefinitionId = serviceDefinitionId;
 		this.planId = planId;
 		this.name = name;
+		this.instanceUsername = instanceUsername;
+		this.instancePassword = instancePassword;
 	}
 
 	public String getName() {
@@ -51,20 +58,40 @@ public class RepositoryResponse {
 		this.name = name;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getInstanceUsername() {
+		return instanceUsername;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setInstanceUsername(String instanceUsername) {
+		this.instanceUsername = instanceUsername;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getInstancePassword() {
+		return instancePassword;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setInstancePassword(String instancePassword) {
+		this.instancePassword = instancePassword;
+	}
+
+	public String getBindingUsername() {
+		return bindingUsername;
+	}
+
+	public void setBindingUsername(String bindingUsername) {
+		this.bindingUsername = bindingUsername;
+	}
+
+	public String getBindingPassword() {
+		return bindingPassword;
+	}
+
+	public void setBindingPassword(String bindingPassword) {
+		this.bindingPassword = bindingPassword;
+	}
+
+	public void setServiceDefinitionId(String serviceDefinitionId) {
+		this.serviceDefinitionId = serviceDefinitionId;
 	}
 
 	public String getHost() {

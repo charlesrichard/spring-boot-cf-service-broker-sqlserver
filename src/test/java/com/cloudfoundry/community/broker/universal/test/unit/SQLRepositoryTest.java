@@ -19,7 +19,8 @@ import com.cloudfoundry.community.broker.universal.util.RandomString;
  *
  */
 public class SQLRepositoryTest {
-
+	private static final String DBO_USERNAME_SUFFIX = "_dbo";
+	private static final String DRDW_USERNAME_SUFFIX = "_drdw";
 	private static final String PLAN_ID = "5";
 	private static final String SERVICE_DEFINITION_ID = "2313213132132";
 	private static final int RANDOM_STRING_LENGTH = 5;
@@ -73,12 +74,12 @@ public class SQLRepositoryTest {
 	@Test
 	public void createAndDeleteInstanceUser() throws Exception {
 		String databaseName = IdentifierConstants.DATABASE_NAME_PREFIX + RandomString.generateRandomString(RANDOM_STRING_LENGTH);
-		String username = databaseName + IdentifierConstants.USERNAME_SUFFIX;
+		String username = databaseName + DBO_USERNAME_SUFFIX;
 		
 		try
 		{
 			repo.createDatabase(databaseName);
-			repo.createUser(databaseName, username, FIXTURE_PASSWORD);
+			repo.createDboUser(databaseName, username, FIXTURE_PASSWORD);
 		}
 		catch (Exception ex)
 		{
@@ -103,11 +104,12 @@ public class SQLRepositoryTest {
 		String instanceId = UUID.randomUUID().toString();
 		String organizationId = UUID.randomUUID().toString();
 		String spaceId = UUID.randomUUID().toString();
+		String username = databaseName + DBO_USERNAME_SUFFIX;
 		
 		try
 		{
 			repo.createDatabase(databaseName);
-			repo.registerInstance(instanceId, organizationId, spaceId, SERVICE_DEFINITION_ID, PLAN_ID, databaseName);
+			repo.registerInstance(instanceId, organizationId, spaceId, SERVICE_DEFINITION_ID, PLAN_ID, databaseName, username, FIXTURE_PASSWORD);
 			RepositoryResponse instance = repo.getInstance(instanceId);
 			assertEquals("InstanceIds do not match after register instance and get", instanceId, instance.getInstanceId());
 		}
@@ -131,7 +133,8 @@ public class SQLRepositoryTest {
 	public void registerAndDeleteBinding() throws Exception
 	{
 		String databaseName = IdentifierConstants.DATABASE_NAME_PREFIX + RandomString.generateRandomString(RANDOM_STRING_LENGTH);
-		String username = databaseName + IdentifierConstants.USERNAME_SUFFIX;
+		String dboUsername = databaseName + DBO_USERNAME_SUFFIX;
+		String drDwUsername = databaseName + DRDW_USERNAME_SUFFIX;
 		String instanceId = UUID.randomUUID().toString();
 		String bindingId = UUID.randomUUID().toString();
 		String organizationId = UUID.randomUUID().toString();
@@ -141,9 +144,10 @@ public class SQLRepositoryTest {
 		try
 		{
 			repo.createDatabase(databaseName);
-			repo.registerInstance(instanceId, organizationId, spaceId, SERVICE_DEFINITION_ID, PLAN_ID, databaseName);
-			repo.createUser(databaseName, username, FIXTURE_PASSWORD);
-			repo.registerBinding(instanceId, bindingId, applicationId, username, FIXTURE_PASSWORD);
+			repo.createDboUser(databaseName, dboUsername, FIXTURE_PASSWORD);
+			repo.registerInstance(instanceId, organizationId, spaceId, SERVICE_DEFINITION_ID, PLAN_ID, databaseName, dboUsername, FIXTURE_PASSWORD);
+			repo.createDrDwUser(databaseName, drDwUsername, FIXTURE_PASSWORD);
+			repo.registerBinding(instanceId, bindingId, applicationId, drDwUsername, FIXTURE_PASSWORD);
 			RepositoryResponse binding = repo.getBinding(instanceId, bindingId);
 			assertEquals("InstanceIds do not match after register binding and get", instanceId, binding.getInstanceId());
 			assertEquals("BindingIds do not match after register binding and get", bindingId, binding.getBindingId());
@@ -156,9 +160,10 @@ public class SQLRepositoryTest {
 		try
 		{
 			repo.deleteBinding(instanceId, bindingId);
-			repo.dropUser(username);
+			repo.dropUser(drDwUsername);
 			repo.deleteInstance(instanceId);
 			repo.dropDatabase(databaseName);
+			repo.dropUser(dboUsername);
 		}
 		catch (Exception ex)
 		{

@@ -21,6 +21,8 @@ CREATE TABLE [dbo].[instance](
 	[service_definition_id] [varchar](50) NOT NULL,
 	[plan_id] [varchar](50) NOT NULL,
 	[instance_db] [varchar](50) NOT NULL,
+	[username] [varchar](50) NOT NULL,
+	[password] [varchar](50) NOT NULL,
 	[created_on] [datetime] NOT NULL
 ) ON [PRIMARY];
 GO
