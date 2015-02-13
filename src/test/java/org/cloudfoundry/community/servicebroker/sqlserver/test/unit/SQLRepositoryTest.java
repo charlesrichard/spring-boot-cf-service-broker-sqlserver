@@ -1,4 +1,4 @@
-package com.cloudfoundry.community.broker.universal.test.unit;
+package org.cloudfoundry.community.servicebroker.sqlserver.test.unit;
 
 import static org.junit.Assert.*;
 

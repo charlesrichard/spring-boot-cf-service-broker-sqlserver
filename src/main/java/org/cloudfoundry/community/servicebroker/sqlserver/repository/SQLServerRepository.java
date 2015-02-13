@@ -3,10 +3,9 @@ package org.cloudfoundry.community.servicebroker.sqlserver.repository;
 import java.util.List;
 import java.util.Map;
 
+import org.cloudfoundry.community.servicebroker.sqlserver.constants.EnvironmentVarConstants;
+import org.cloudfoundry.community.servicebroker.util.FormattedVariableList;
 import org.stringtemplate.v4.ST;
-
-import com.cloudfoundry.community.broker.universal.constants.EnvironmentVarConstants;
-import com.cloudfoundry.community.broker.universal.util.FormattedVariableList;
 
 public class SQLServerRepository extends BaseJDBCRepository{
 	

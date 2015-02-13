@@ -2,18 +2,20 @@ package org.cloudfoundry.community.servicebroker.sqlserver.service;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.cloudfoundry.community.servicebroker.exception.ServiceBrokerException;
+import org.cloudfoundry.community.servicebroker.exception.ServiceInstanceDoesNotExistException;
+import org.cloudfoundry.community.servicebroker.exception.ServiceInstanceExistsException;
+import org.cloudfoundry.community.servicebroker.exception.ServiceInstanceUpdateNotSupportedException;
+import org.cloudfoundry.community.servicebroker.model.ServiceDefinition;
+import org.cloudfoundry.community.servicebroker.model.ServiceInstance;
+import org.cloudfoundry.community.servicebroker.service.ServiceInstanceService;
+import org.cloudfoundry.community.servicebroker.sqlserver.constants.IdentifierConstants;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.RepositoryResponse;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.SQLServerRepository;
+import org.cloudfoundry.community.servicebroker.util.FormattedVariableList;
+import org.cloudfoundry.community.servicebroker.util.RandomString;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import com.cloudfoundry.community.broker.universal.constants.IdentifierConstants;
-import com.cloudfoundry.community.broker.universal.exception.ServiceBrokerException;
-import com.cloudfoundry.community.broker.universal.exception.ServiceInstanceExistsException;
-import com.cloudfoundry.community.broker.universal.model.ServiceInstance;
-import com.cloudfoundry.community.broker.universal.repository.RepositoryResponse;
-import com.cloudfoundry.community.broker.universal.repository.SQLServerRepository;
-import com.cloudfoundry.community.broker.universal.service.ServiceInstanceService;
-import com.cloudfoundry.community.broker.universal.util.FormattedVariableList;
-import com.cloudfoundry.community.broker.universal.util.RandomString;
 
 public class SqlServerServiceInstanceService implements ServiceInstanceService{	
 	private static SQLServerRepository adminRepo;
@@ -92,5 +94,28 @@ public class SqlServerServiceInstanceService implements ServiceInstanceService{
 		}
 		
 		return request.getScheme() + "://" + request.getServerName() + IdentifierConstants.DASHBOARD_BASE_PATH + "/" + instanceid;
+	}
+
+	@Override
+	public ServiceInstance createServiceInstance(ServiceDefinition arg0,
+			String arg1, String arg2, String arg3, String arg4)
+			throws ServiceInstanceExistsException, ServiceBrokerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ServiceInstance deleteServiceInstance(String arg0, String arg1,
+			String arg2) throws ServiceBrokerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ServiceInstance updateServiceInstance(String arg0, String arg1)
+			throws ServiceInstanceUpdateNotSupportedException,
+			ServiceBrokerException, ServiceInstanceDoesNotExistException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

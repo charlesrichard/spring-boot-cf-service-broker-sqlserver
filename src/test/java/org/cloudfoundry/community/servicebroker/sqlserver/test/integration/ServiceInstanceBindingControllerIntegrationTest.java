@@ -1,4 +1,4 @@
-package com.cloudfoundry.community.broker.universal.test.integration;
+package org.cloudfoundry.community.servicebroker.sqlserver.test.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;

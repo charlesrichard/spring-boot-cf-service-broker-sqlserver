@@ -47,5 +47,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-/repo/
 /target/
+/build/
+/bin/

@@ -1,8 +1,10 @@
 package org.cloudfoundry.community.servicebroker.sqlserver.service;
 
+import org.cloudfoundry.community.servicebroker.sqlserver.constants.EnvironmentVarConstants;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.RepositoryResponse;
+import org.cloudfoundry.community.servicebroker.sqlserver.repository.SQLServerRepository;
 import org.stringtemplate.v4.ST;
-import com.cloudfoundry.community.broker.universal.constants.*;
-import com.cloudfoundry.community.broker.universal.repository.*;
+
 import com.cloudfoundry.community.broker.universal.service.*;
 
 public class SqlServerDashboardService implements DashboardService {

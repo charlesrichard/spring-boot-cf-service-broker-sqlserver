@@ -1,4 +1,4 @@
-package com.cloudfoundry.community.broker.universal.test.fixture;
+package org.cloudfoundry.community.servicebroker.sqlserver.test.fixture;
 
 import java.util.ArrayList;
 import java.util.List;

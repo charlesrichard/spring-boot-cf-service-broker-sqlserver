@@ -1,10 +1,10 @@
 package org.cloudfoundry.community.servicebroker.sqlserver.repository;
 
+import org.cloudfoundry.community.servicebroker.sqlserver.constants.EnvironmentVarConstants;
+import org.cloudfoundry.community.servicebroker.util.FormattedVariableList;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import com.cloudfoundry.community.broker.universal.constants.EnvironmentVarConstants;
-import com.cloudfoundry.community.broker.universal.util.FormattedVariableList;;
 
 public abstract class BaseJDBCRepository {
 	protected JdbcTemplate adminDatabase;
