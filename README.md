@@ -3,7 +3,7 @@ spring-boot-cf-uni-java-broker
 
 Spring Boot project implementing SQL Server and Oracle databases.
 
-Environment variables must be set. Fastest way to set variables is to modify the launch files directly at: <workspace>/.metadata/.plugins/.org.eclipse.debug.core/.launches/<runasfilename>.
+Environment variables must be set to run tests. Set variables is to modify the launch files directly at: <workspace>/.metadata/.plugins/.org.eclipse.debug.core/.launches/<runasfilename> or create/duplicate run and debug configurations for the tests.
 
 ```html
 Example of these variables, for SQL Server, are below.
