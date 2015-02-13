@@ -1,9 +1,10 @@
 spring-boot-cf-uni-java-broker
 =============================
 
-Spring Boot Cloud Foundry service broker built for easy extension through a factory pattern. In the spirit of Cloud Foundry to support .Net natively in the the very near future, this broker support SQL Server out of the box... others come later. To extend, build new classes implementing ServiceInstanceService, ServiceInstanceBindingService, CatalogService, and DashboardService. Wire up the factories. Implementation and concrete backends of the services are up to you. The SQLServerRepository class is a good example of what to do.
+Spring Boot Cloud Foundry service broker built for easy extension through a factory pattern. In the spirit of Cloud Foundry to support .Net natively in the the very near future, this broker support SQL Server out of the box... others come later. 
+To extend, build new classes implementing ServiceInstanceService, ServiceInstanceBindingService, CatalogService, and DashboardService. Wire up the factories. Implementation and concrete backends of the services are up to you. The SQLServerRepository class is a good example of what to do.
 
-...*and*... yes **There is a dashboard to report back the credentials.**
+...*and*... yes, **there is a dashboard.**
 
 # Setup
 ## Maven
