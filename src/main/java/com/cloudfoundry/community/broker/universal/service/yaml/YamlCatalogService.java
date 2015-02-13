@@ -12,10 +12,9 @@ public class YamlCatalogService implements CatalogService {
 	
 	public synchronized Map<String, Object> getCatalog() {
 	    if (settings == null) {
-	      Yaml yaml = new Yaml();
-	      Class theClass = CatalogService.class.getClass();
-	      InputStream stream = theClass.getResourceAsStream("/services.yml");
-	      settings = (Map<String, Object>)yaml.load(stream);
+	    	Yaml yaml = new Yaml();
+	    	InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("services.yml");  
+	    	settings = (Map<String, Object>)yaml.load(stream);
 	    }
 	    return settings;
 	}

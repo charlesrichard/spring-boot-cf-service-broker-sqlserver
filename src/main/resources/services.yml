@@ -2,6 +2,7 @@ services:
 - name: p-sqlserver
   id: 3101b971-1044-4816-a7ac-9ded2e028079
   description: SQLServer 2012 service for application development and testing
+  bindable: true
   tags:
     - sqlserver
     - relational

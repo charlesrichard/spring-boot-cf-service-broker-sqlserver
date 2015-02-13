@@ -1,7 +1,10 @@
 package com.cloudfoundry.community.broker.universal.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,17 +13,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import com.cloudfoundry.community.broker.universal.controller.DashboardController;
 
 @Configuration
-@EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth)
-            throws Exception {
-        auth
-        	.inMemoryAuthentication().withUser("admin").password("password").roles("ADMIN")
-        	.and().withUser("user").password("password").roles("USER").and().and().build();
-    }
-
+	//TODO: Figure out the damn filters for RBAC
+	/*
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -29,18 +25,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(DashboardController.BASE_PATH + "/**").hasRole("USER")
             .and()
             	.httpBasic();
-    }
-}
-
-/*
-@Configuration
-public class WebSecurityConfig {
-
+    }*/
+    
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
         return new AuthenticationManagerBuilder(new NopPostProcessor())
-                       .inMemoryAuthentication().withUser("admin").password("password").roles("ADMIN")
-                       .and().withUser("user").password("password").roles("USER").and().and().build();
+	        .inMemoryAuthentication()
+	        	.withUser("user").password("password").roles("USER")
+	    	.and().and().build();
     }
 
     private static class NopPostProcessor implements ObjectPostProcessor {
@@ -51,4 +43,3 @@ public class WebSecurityConfig {
         }
     };
 }
-*/
