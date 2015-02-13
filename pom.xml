@@ -3,16 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.pivotal.demo</groupId>
-  <artifactId>spring-boot-cf-uni-java-broker</artifactId>
+  <artifactId>spring-boot-cf-service-broker-sqlserver</artifactId>
   <version>1.0.0</version>
   <packaging>war</packaging>
-  <name>Spring Boot Universal Service Broker</name>
-  	<parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.1.6.RELEASE</version>
-    </parent>
-
+  <name>Spring Boot SQL Server Service Broker</name>
     <properties>
 
 		<!-- Generic properties -->
@@ -21,31 +15,14 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	
 		<!-- Spring -->
-		<spring-framework.version>4.1.4.RELEASE</spring-framework.version>
 		<spring-boot-framework.version>1.2.1.RELEASE</spring-boot-framework.version>
-
-		<!-- Hibernate / JPA -->
-		<hibernate.version>4.2.1.Final</hibernate.version>
-
-		<!-- Logging -->
-		<logback.version>1.0.13</logback.version>
-		<slf4j.version>1.7.5</slf4j.version>
-
-		<!-- Test -->
-		<junit.version>4.11</junit.version>
-
+		<spring-boot-cf-service-broker.version>2.4.0</spring-boot-cf-service-broker.version>
 	</properties>
-    <!-- Add Spring repositories -->
-    <!-- (you don't need this if you are using a .RELEASE version) -->
 	<repositories>
 		<repository>
             <id>spring-snapshots</id>
             <url>http://repo.spring.io/snapshot</url>
             <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <url>http://repo.spring.io/milestone</url>
         </repository>
        	<repository>
     		<id>repo</id>
@@ -64,74 +41,37 @@
     </pluginRepositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-integration</artifactId>
+			<groupId>org.cloudfoundry</groupId>
+			<artifactId>spring-boot-cf-service-broker</artifactId>
+			<version>${spring-boot-cf-service-broker.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-             <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>   
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.13</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.1</version>
-		</dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-tomcat</artifactId>
+	<version>${spring-boot-framework.version}</version>
+	<scope>provided</scope>
+</dependency>
+<dependency>
+	<groupId>org.cloudfoundry</groupId>
+	<artifactId>spring-boot-cf-service-broker-tests</artifactId>
+	<version>${spring-boot-cf-service-broker.version}</version>
+	<scope>test</scope>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-test</artifactId>
+	<version>${spring-boot-framework.version}</version>
+	<scope>test</scope>
+</dependency>
 		<dependency>
 	<groupId>org.yaml</groupId>
 	<artifactId>snakeyaml</artifactId>
 	<version>1.14</version>
 </dependency>
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-test</artifactId>
-	<version>${spring-boot-framework.version}</version>
-</dependency>
-<dependency>
-	<groupId>com.jayway.jsonpath</groupId>
-	<artifactId>json-path</artifactId>
-	<version>1.2.0</version>
-</dependency>
-<dependency>
 	<groupId>org.antlr</groupId>
 	<artifactId>ST4</artifactId>
 	<version>4.0.8</version>
-</dependency>
-<dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-web</artifactId>
-	<version>${spring-boot-framework.version}</version>
-</dependency>
-<dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-tomcat</artifactId>
-	<scope>provided</scope>
-</dependency>
-<dependency>
-  <groupId>ojdbc7</groupId>
-  <artifactId>ojdbc7</artifactId>
-  <version>7</version>
 </dependency>
 <dependency>
   <groupId>sqljdbc41</groupId>
