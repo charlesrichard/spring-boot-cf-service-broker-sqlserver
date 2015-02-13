@@ -23,33 +23,39 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.cloudfoundry.community.broker.universal.controller.CatalogController;
-import com.cloudfoundry.community.broker.universal.service.CatalogService;
+import com.cloudfoundry.community.broker.universal.controller.*;
+import com.cloudfoundry.community.broker.universal.model.ServiceInstance;
+import com.cloudfoundry.community.broker.universal.service.*;
+import com.cloudfoundry.community.broker.universal.test.fixture.ServiceInstanceFixture;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 @WebAppConfiguration
-public class CatalogControllerIntegrationTest {
+public class DashboardControllerIntegrationTest {
 	
 	@Autowired
     private WebApplicationContext ctx;
 	MockMvc mockMvc;
 
+	ServiceInstanceService serviceInstanceService;
+
 	@Before
 	public void setup() {
-		/*
-		MockitoAnnotations.initMocks(this);
-
-	    this.mockMvc = MockMvcBuilders.standaloneSetup(controller)
-	            .setMessageConverters(new MappingJackson2HttpMessageConverter()).build();
-	            */
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build();
 	}
 	
 	@Test
-	public void catalogIsRetrievedCorrectly() throws Exception {
+	public void dashboardIsRetrievedCorrectly() throws Exception {
 	
-		MvcResult result = this.mockMvc.perform(get(CatalogController.BASE_PATH)
+		ServiceInstance instance = ServiceInstanceFixture.getServiceInstance();
+	    
+	    String url = DashboardController.BASE_PATH + "/" + instance.getId();
+	    
+	    serviceInstanceService.createServiceInstance(instance.getId(),
+	    		instance.getServiceDefinitionId(), instance.getPlanId(), 
+	    		instance.getOrganizationGuid(), instance.getSpaceGuid());
+		
+		MvcResult result = this.mockMvc.perform(get(url)
 		        .accept(MediaType.APPLICATION_JSON))
 		        .andExpect(status().isOk())
 	            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -57,6 +63,8 @@ public class CatalogControllerIntegrationTest {
 	    
 	    // TO DO - check rest of the json including plans
 		String content = result.getResponse().getContentAsString();
+		
+		serviceInstanceService.deleteServiceInstance(instance.getId());
 		
 		assertNotNull(content);
 	}
@@ -66,8 +74,13 @@ public class CatalogControllerIntegrationTest {
     public static class TestConfiguration {
  
         @Bean
-        public CatalogController catalogController() throws Exception {
-            return new CatalogController();
+        public DashboardController dashboardController() throws Exception {
+            return new DashboardController();
+        }
+        
+        @Bean
+        public ServiceInstanceController ServiceInstanceController() throws Exception {
+            return new ServiceInstanceController();
         }
     }
 }

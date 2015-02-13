@@ -34,11 +34,11 @@ public interface ServiceInstanceService {
 	
 	/**
 	 * Delete and return the instance if it exists.
-	 * @param id
+	 * @param instanceId
 	 * @return The delete ServiceInstance or null if one did not exist.
 	 * @throws ServiceBrokerException is something goes wrong internally
 	 */
-	ServiceInstance deleteServiceInstance(String id) throws ServiceBrokerException, Exception;
+	ServiceInstance deleteServiceInstance(String instanceId) throws ServiceBrokerException, Exception;
 	
 }
 
