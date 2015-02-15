@@ -9,6 +9,5 @@ applications:
     CF_SB_SERVICE_HOST: ec2-52-0-103-168.compute-1.amazonaws.com
     CF_SB_SERVICE_PASSWORD: password
     CF_SB_SERVICE_PORT: 1433
-    CF_SB_SERVICE_TYPE: SQLSERVER
     CF_SB_SERVICE_USERNAME: cf_admin_sa
     CF_SB_SQL_SERVER_ADMIN_DATABASE_NAME: cf_admin
