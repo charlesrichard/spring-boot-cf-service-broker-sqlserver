@@ -1,23 +1,13 @@
-spring-boot-cf-uni-java-broker
+spring-boot-cf-service-broker-sqlserver
 =============================
 
-Spring Boot Cloud Foundry service broker built for easy extension through a factory pattern. In the spirit of Cloud Foundry to support .Net natively in the the very near future, this broker support SQL Server out of the box... others come later. 
-To extend, build new classes implementing ServiceInstanceService, ServiceInstanceBindingService, CatalogService, and DashboardService. Wire up the factories. Implementation and concrete backends of the services are up to you. The SQLServerRepository class is a good example of what to do.
+Spring Boot Cloud Foundry service broker exposing Microsoft SQL Server. This project extends [spring-boot-cf-service-broker](https://github.com/cloudfoundry-community/spring-boot-cf-service-broker). Please read the read.me on this project for general question on security and deployment
 
 ...*and*... yes, **there is a dashboard.**
 
 # Setup
-## Maven
-This project is mavenized and targeted towards STS. However, since the JDBC drivers for this project are not stored in a public repo, I've decided to create a local repo and reference the same in the pom. As such, once the project is cloned, run the following commands in the root of the project directory.
-#### Oracle:
-```bat
-mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true -Dpackaging=jar -Dfile=lib/ojdbc7.jar -DgroupId=ojdbc7 -DartifactId=ojdbc7 -Dversion=7
-```
-#### SQL Server:
-```bat
-mvn install:install-file -DlocalRepositoryPath=repo -DcreateChecksum=true -Dpackaging=jar -Dfile=lib/sqljdbc41.jar -DgroupId=sqljdbc41 -DartifactId=sqljdbc41 -Dversion=4.1
-```
-Once you setup your local repo, do a clean build **WITHOUT** running tests. Command below:
+## Gradle
+Build automation is provided by Gradle. The catch is that SQL Server configuration is set through environment variables. You may edit build.gradle to add the vars or do a build **WITHOUT** running tests. Command below:
 ```bat
 mvn clean package -DskipTests=true
 ```
@@ -33,10 +23,9 @@ Example of these variables, for SQL Server, are below.
 <mapEntry key="CF_SB_SERVICE_HOST" value="localhost"/>
 <mapEntry key="CF_SB_SERVICE_PASSWORD" value="Password1234"/>
 <mapEntry key="CF_SB_SERVICE_PORT" value="1433"/>
-<mapEntry key="CF_SB_SERVICE_TYPE" value="SQLSERVER"/>
 <mapEntry key="CF_SB_SERVICE_USERNAME" value="cf_admin_sa"/>
 <mapEntry key="CF_SB_SQL_SERVER_ADMIN_DATABASE_NAME" value="cf_admin"/>
 </mapAttribute>
 ```
 # Deploy
-An example yaml file is included. Adjust the values for your environment. I hope you'll appreciate the flexibility and simplicity granted by using environment variables to configure for concrete services from environment to environment and type to type.
+An example yaml file is included. Adjust the values for your environment. I hope you'll appreciate the flexibility, simplicity, and security granted by using environment variables to configure for concrete services from environment to environment and type to type.

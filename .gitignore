@@ -46,6 +46,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+.gradle
 
-/repo/
 /target/
+/build/
+/bin/

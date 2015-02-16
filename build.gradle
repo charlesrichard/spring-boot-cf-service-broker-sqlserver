@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-snapshot" }
+        mavenLocal()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.2.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'war'
+
+
+ext {
+  springBootCfServiceBrokerVersion = "2.4.0"
+  springBootVersion = '1.1.9.RELEASE'
+  springVersion = '4.1.4.RELEASE'
+  baseName = 'spring-boot-cf-service-broker-sqlserver'
+  version =  '1.0.0'
+}
+
+war {
+    baseName = baseName
+    version =  version
+}
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/libs-snapshot" }
+	flatDir { dirs "lib" }
+}
+
+configurations {
+    providedRuntime
+}
+
+dependencies {
+    compile("org.cloudfoundry:spring-boot-cf-service-broker:${springBootCfServiceBrokerVersion}")
+	compile("org.antlr:ST4:4.0.8")
+	compile(":sqljdbc41:")
+	compile("org.springframework:spring-jdbc:${springVersion}")
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}")
+    testCompile("org.cloudfoundry:spring-boot-cf-service-broker-tests:${springBootCfServiceBrokerVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.12'
+}
