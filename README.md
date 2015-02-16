@@ -17,6 +17,9 @@ Since only Microsoft SQL Server has been implemented, the scope of this is only 
 ## Eclipse
 Import the maven project into your workspace as you normally would. Once imported, in order to run the tests, you will need to set service specific environment variables in the run/debug settings **for each test launch configuration**. Your choice in the granualarity of these tests, but I suggest doing it at the class level. Set variables by modifying the launch files directly at: <workspace>/.metadata/.plugins/.org.eclipse.debug.core/.launches/<runasfilename> or create/duplicate run and debug configurations for the tests.
 
+## Cloud Foundry
+The project's runtime is Java 1.8. Make sure you have the latest Java buldpack deployed to your CF instance.
+
 ```html
 Example of these variables, for SQL Server, are below.
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
