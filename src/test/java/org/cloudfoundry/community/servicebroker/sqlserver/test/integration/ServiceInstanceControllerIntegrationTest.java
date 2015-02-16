@@ -6,16 +6,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.cloudfoundry.community.servicebroker.controller.ServiceInstanceController;
-import org.cloudfoundry.community.servicebroker.model.ServiceDefinition;
 import org.cloudfoundry.community.servicebroker.model.ServiceInstance;
 import org.cloudfoundry.community.servicebroker.model.fixture.ServiceInstanceFixture;
 import org.cloudfoundry.community.servicebroker.service.ServiceInstanceService;
 import org.cloudfoundry.community.servicebroker.sqlserver.service.SqlServerServiceInstanceService;
+import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.CatalogServiceFixture;
+import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.ServiceDefinitionFixture;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -23,6 +25,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -34,9 +37,6 @@ public class ServiceInstanceControllerIntegrationTest {
 	
 	MockMvc mockMvc;
 	ServiceInstanceService serviceInstanceService;
-	
-	@Mock
-	private ServiceDefinition serviceDefinition;
 	
 	@Before
 	public void setup() {
@@ -77,7 +77,7 @@ public class ServiceInstanceControllerIntegrationTest {
 	    String url = ServiceInstanceController.BASE_PATH + "/" + instance.getId();
 	    String body = ServiceInstanceFixture.getCreateServiceInstanceRequestJson();
 	    
-	    serviceInstanceService.createServiceInstance(serviceDefinition, instance.getId(),
+	    serviceInstanceService.createServiceInstance(ServiceDefinitionFixture.getServiceDefinition(), instance.getId(),
 	    		instance.getPlanId(), 
 	    		instance.getOrganizationGuid(), instance.getSpaceGuid());
 	    
@@ -134,4 +134,14 @@ public class ServiceInstanceControllerIntegrationTest {
 	    	)
 	    	.andExpect(status().isNotFound());
  	}
+	
+	@Configuration
+    @EnableWebMvc
+    public static class TestConfiguration {
+ 
+        @Bean
+        public ServiceInstanceController ServiceInstanceController() throws Exception {
+            return new ServiceInstanceController(new SqlServerServiceInstanceService(), CatalogServiceFixture.getCatalog());
+        }
+    }
 }

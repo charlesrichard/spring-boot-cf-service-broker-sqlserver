@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -21,6 +23,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.cloudfoundry.community.servicebroker.sqlserver.service.*;
+import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.ServiceDefinitionFixture;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -32,9 +38,6 @@ public class DashboardControllerIntegrationTest {
 	MockMvc mockMvc;
 
 	ServiceInstanceService serviceInstanceService;
-	
-	@Mock
-	private ServiceDefinition serviceDefinition;
 
 	@Before
 	public void setup() {
@@ -55,7 +58,8 @@ public class DashboardControllerIntegrationTest {
 	    
 	    String url = DashboardController.BASE_PATH + "/" + instance.getId();
 	    
-	    serviceInstanceService.createServiceInstance(serviceDefinition, instance.getId(),
+	    serviceInstanceService.createServiceInstance(ServiceDefinitionFixture.getServiceDefinition(), 
+	    		instance.getId(),
 	    		instance.getPlanId(), 
 	    		instance.getOrganizationGuid(), instance.getSpaceGuid());
 		
@@ -71,4 +75,14 @@ public class DashboardControllerIntegrationTest {
 		
 		assertNotNull(content);
 	}
+	
+	@Configuration
+    @EnableWebMvc
+    public static class TestConfiguration {
+ 
+        @Bean
+        public DashboardController DashboardController() throws Exception {
+            return new DashboardController(new SqlServerDashboardService());
+        }
+    }
 }
