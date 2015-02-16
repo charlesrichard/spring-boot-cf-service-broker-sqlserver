@@ -3,7 +3,6 @@ package org.cloudfoundry.community.servicebroker.sqlserver.test.integration;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import org.cloudfoundry.community.servicebroker.model.ServiceDefinition;
 import org.cloudfoundry.community.servicebroker.model.ServiceInstance;
 import org.cloudfoundry.community.servicebroker.model.fixture.*;
 import org.cloudfoundry.community.servicebroker.service.ServiceInstanceService;
@@ -12,7 +11,6 @@ import org.cloudfoundry.community.servicebroker.sqlserver.service.SqlServerServi
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.cloudfoundry.community.servicebroker.sqlserver.service.*;
-import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.ServiceDefinitionFixture;
+import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.ServiceFixture;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -58,7 +56,7 @@ public class DashboardControllerIntegrationTest {
 	    
 	    String url = DashboardController.BASE_PATH + "/" + instance.getId();
 	    
-	    serviceInstanceService.createServiceInstance(ServiceDefinitionFixture.getServiceDefinition(), 
+	    serviceInstanceService.createServiceInstance(ServiceFixture.getService(), 
 	    		instance.getId(),
 	    		instance.getPlanId(), 
 	    		instance.getOrganizationGuid(), instance.getSpaceGuid());

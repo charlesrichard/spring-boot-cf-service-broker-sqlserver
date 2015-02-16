@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.cloudfoundry.community.servicebroker.model.Catalog;
 import org.cloudfoundry.community.servicebroker.model.ServiceDefinition;
-import org.cloudfoundry.community.servicebroker.model.fixture.ServiceInstanceFixture;
 import org.cloudfoundry.community.servicebroker.service.BeanCatalogService;
 import org.cloudfoundry.community.servicebroker.service.CatalogService;
 

@@ -95,7 +95,7 @@ public class SqlServerServiceInstanceService implements ServiceInstanceService{
 		// the instance exists, so delete it 
 		try {
 			adminRepo.deleteInstance(instanceId);
-			adminRepo.dropUser(instance.getInstanceUsername());
+			adminRepo.dropDboUser(instance.getInstanceUsername());
 			adminRepo.dropDatabase(instance.getName());
 		} catch (Exception e) {
 			throw new ServiceBrokerException(e);

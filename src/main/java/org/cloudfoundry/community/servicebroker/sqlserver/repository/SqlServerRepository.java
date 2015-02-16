@@ -39,6 +39,11 @@ public class SqlServerRepository extends BaseJDBCRepository{
 	private static final String DELETE_INSTANCE_template = "USE [<ADMIN_DB>] DELETE FROM [instance] WHERE instance_id = '<INSTANCE_ID>';";
 	// ------------------------------------------------------------------
 	
+	// Instance user drop scripts ------------------------------------------------------------------
+	// Define $MASTER_DB$, $INSTANCE_DB$ and $INSTANCE_USERNAME$
+	private static final String DROP_DBO_USER_template = "USE [<MASTER_DB>] DROP LOGIN [<INSTANCE_USERNAME>];";
+	// ------------------------------------------------------------------
+	
 	// Binding user creation scripts ------------------------------------------------------------------
 	// Define $MASTER_DB$, $INSTANCE_DB$, $INSTANCE_USERNAME$, and $INSTANCE_PASSWORD$
 	private static final String CREATE_DBO_USER_template = "USE [<MASTER_DB>] CREATE LOGIN [<INSTANCE_USERNAME>] WITH PASSWORD=N'<INSTANCE_PASSWORD>', DEFAULT_DATABASE=[<INSTANCE_DB>], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF USE [<INSTANCE_DB>] CREATE USER [<INSTANCE_USERNAME>] FOR LOGIN [<INSTANCE_USERNAME>] USE [<INSTANCE_DB>] ALTER USER [<INSTANCE_USERNAME>] WITH DEFAULT_SCHEMA=[dbo] USE [<INSTANCE_DB>] ALTER ROLE [db_owner] ADD MEMBER [<INSTANCE_USERNAME>];";
@@ -59,8 +64,8 @@ public class SqlServerRepository extends BaseJDBCRepository{
 	// ------------------------------------------------------------------
 	
 	// Binding user drop scripts ------------------------------------------------------------------
-	// Define $MASTER_DB$ and $INSTANCE_USERNAME$
-	private static final String DROP_USER_template = "USE [<MASTER_DB>] DROP LOGIN [<INSTANCE_USERNAME>];";
+	// Define $MASTER_DB$, $INSTANCE_DB$ and $INSTANCE_USERNAME$
+	private static final String DROP_DRDW_USER_template = "USE [<INSTANCE_DB>] DROP USER [<INSTANCE_USERNAME>] USE [<MASTER_DB>] DROP LOGIN [<INSTANCE_USERNAME>];";
 	// ------------------------------------------------------------------
 	
 	// Binding registry scripts
@@ -224,9 +229,18 @@ public class SqlServerRepository extends BaseJDBCRepository{
 		adminDatabase.execute(st.render());
 	}
 	
-	public void dropUser(String username) throws Exception
+	public void dropDrDwUser(String databaseName, String username) throws Exception
 	{
-		ST st = new ST(DROP_USER_template);
+		ST st = new ST(DROP_DRDW_USER_template);
+		st.add("MASTER_DB", MASTER_DB);
+		st.add("INSTANCE_DB", databaseName);
+		st.add("INSTANCE_USERNAME", username);
+		adminDatabase.execute(st.render());
+	}
+	
+	public void dropDboUser(String username) throws Exception
+	{
+		ST st = new ST(DROP_DBO_USER_template);
 		st.add("MASTER_DB", MASTER_DB);
 		st.add("INSTANCE_USERNAME", username);
 		adminDatabase.execute(st.render());

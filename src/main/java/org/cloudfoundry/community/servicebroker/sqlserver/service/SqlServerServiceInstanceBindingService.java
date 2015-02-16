@@ -44,7 +44,7 @@ public class SqlServerServiceInstanceBindingService implements ServiceInstanceBi
 		String instanceId = instance.getId();
 		String serviceDefinitionId = instance.getServiceDefinitionId();
 		String databaseName = repositoryInstance.getName();
-		String username = databaseName + DRDW_USERNAME_SUFFIX;
+		String username = databaseName + "_" + RandomString.generateRandomString(IdentifierConstants.RANDOM_STRING_LENGTH) + DRDW_USERNAME_SUFFIX;
 		String password = RandomString.generateRandomString(IdentifierConstants.RANDOM_STRING_LENGTH);
 		String host = adminRepo.getHost();
 		String port = adminRepo.getPort();
@@ -111,7 +111,8 @@ public class SqlServerServiceInstanceBindingService implements ServiceInstanceBi
 		
 		try {
 			adminRepo.deleteBinding(instance.getId(), bindingId);
-			adminRepo.dropUser(binding.getCredentials().get(IdentifierConstants.CREDENTIALS_USERNAME).toString());
+			adminRepo.dropDrDwUser(binding.getCredentials().get(IdentifierConstants.CREDENTIALS_NAME).toString(),
+					binding.getCredentials().get(IdentifierConstants.CREDENTIALS_USERNAME).toString());
 		} catch (Exception e) {
 			throw new ServiceBrokerException(e);
 		}

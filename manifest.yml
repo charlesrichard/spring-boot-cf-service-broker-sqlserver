@@ -4,7 +4,7 @@ applications:
   memory: 512M
   host: unibroker-svob
   instances: 1
-  path: target/spring-boot-cf-uni-java-broker-1.0.0.war
+  path: build/libs/spring-boot-cf-uni-java-broker.war
   env:
     CF_SB_SERVICE_HOST: ec2-52-0-103-168.compute-1.amazonaws.com
     CF_SB_SERVICE_PASSWORD: password

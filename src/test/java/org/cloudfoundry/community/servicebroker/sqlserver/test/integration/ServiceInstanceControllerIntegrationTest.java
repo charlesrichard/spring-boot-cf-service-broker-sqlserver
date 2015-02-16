@@ -7,11 +7,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.cloudfoundry.community.servicebroker.controller.ServiceInstanceController;
 import org.cloudfoundry.community.servicebroker.model.ServiceInstance;
-import org.cloudfoundry.community.servicebroker.model.fixture.ServiceInstanceFixture;
 import org.cloudfoundry.community.servicebroker.service.ServiceInstanceService;
 import org.cloudfoundry.community.servicebroker.sqlserver.service.SqlServerServiceInstanceService;
 import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.CatalogServiceFixture;
-import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.ServiceDefinitionFixture;
+import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.ServiceFixture;
+import org.cloudfoundry.community.servicebroker.sqlserver.test.fixture.ServiceInstanceFixture;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,7 +77,7 @@ public class ServiceInstanceControllerIntegrationTest {
 	    String url = ServiceInstanceController.BASE_PATH + "/" + instance.getId();
 	    String body = ServiceInstanceFixture.getCreateServiceInstanceRequestJson();
 	    
-	    serviceInstanceService.createServiceInstance(ServiceDefinitionFixture.getServiceDefinition(), instance.getId(),
+	    serviceInstanceService.createServiceInstance(ServiceFixture.getService(), instance.getId(),
 	    		instance.getPlanId(), 
 	    		instance.getOrganizationGuid(), instance.getSpaceGuid());
 	    

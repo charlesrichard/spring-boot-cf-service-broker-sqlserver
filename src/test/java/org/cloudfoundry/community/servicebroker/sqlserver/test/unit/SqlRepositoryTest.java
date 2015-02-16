@@ -88,7 +88,7 @@ public class SqlRepositoryTest {
 		try
 		{
 			repo.dropDatabase(databaseName);
-			repo.dropUser(username);
+			repo.dropDboUser(username);
 		}
 		catch (Exception ex)
 		{
@@ -159,10 +159,10 @@ public class SqlRepositoryTest {
 		try
 		{
 			repo.deleteBinding(instanceId, bindingId);
-			repo.dropUser(drDwUsername);
+			repo.dropDrDwUser(databaseName, drDwUsername);
 			repo.deleteInstance(instanceId);
 			repo.dropDatabase(databaseName);
-			repo.dropUser(dboUsername);
+			repo.dropDboUser(dboUsername);
 		}
 		catch (Exception ex)
 		{

@@ -18,14 +18,14 @@ public class CatalogConfig {
 	public Catalog catalog() {		
 		return new Catalog( Arrays.asList(
 				new ServiceDefinition(
-					"p-sqlserver", 
 					"3101b971-1044-4816-a7ac-9ded2e028079", 
+					"p-sqlserver", 
 					"SQLServer 2012 service for application development and testing", 
 					true, 
 					false,
 					Arrays.asList(
-							new Plan("50mb", 
-									"2451fa22-df16-4c10-ba6e-1f682d3dcdc9", 
+							new Plan("2451fa22-df16-4c10-ba6e-1f682d3dcdc9", 
+									"50mb", 
 									"Shared SQLServer, 50mb persistent disk, 40 max concurrent connections",
 									getPlanMetadata())),
 					Arrays.asList("sqlserver", "relational"),
