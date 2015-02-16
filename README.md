@@ -1,7 +1,7 @@
 spring-boot-cf-service-broker-sqlserver
 =============================
 
-Spring Boot Cloud Foundry service broker exposing Microsoft SQL Server. This project extends [spring-boot-cf-service-broker](https://github.com/cloudfoundry-community/spring-boot-cf-service-broker). Please read the [read.me](https://github.com/cloudfoundry-community/spring-boot-cf-service-broker/blob/master/README.md) on this project for general question on security and deployment
+Spring Boot Cloud Foundry service broker exposing Microsoft SQL Server. This project extends [spring-boot-cf-service-broker](https://github.com/cloudfoundry-community/spring-boot-cf-service-broker). Please read the [read.me](https://github.com/cloudfoundry-community/spring-boot-cf-service-broker/blob/master/README.md) on that project for general question on security and deployment
 
 ...*and*... yes, **there is a dashboard.**
 
