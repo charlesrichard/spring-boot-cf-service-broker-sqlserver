@@ -38,6 +38,11 @@ configurations {
     providedRuntime
 }
 
+test {
+    def my_vars = ['CF_SB_SERVICE_HOST': 'ec2-52-0-187-103.compute-1.amazonaws.com', 'CF_SB_SERVICE_PASSWORD': 'password', 'CF_SB_SERVICE_PORT': '1433', 'CF_SB_SERVICE_USERNAME': 'cf_admin_sa', 'CF_SB_SQL_SERVER_ADMIN_DATABASE_NAME': 'cf_admin']
+    environment my_vars
+}
+
 dependencies {
     compile("org.cloudfoundry:spring-boot-cf-service-broker:${springBootCfServiceBrokerVersion}")
 	compile("org.antlr:ST4:4.0.8")
@@ -49,5 +54,5 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
+    gradleVersion = '2.3'
 }
